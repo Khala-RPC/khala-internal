@@ -37,6 +37,9 @@ kotlin {
             executable {
                 entryPoint = "kscience.khala.internal.main"
             }
+            sharedLib {
+                baseName = "khala-internal"
+            }
         }
     }
 
