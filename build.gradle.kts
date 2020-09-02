@@ -44,9 +44,14 @@ kotlin {
             packageName("czmq")
             includeDirs { allHeaders("./src/nativeMain/resources/") }
         }
-        val msgpack by main.cinterops.creating {
-            defFile("src/nativeInterop/cinterop/msgpack.def")
+        val msgpackc by main.cinterops.creating {
+            defFile("src/nativeInterop/cinterop/msgpackc.def")
             packageName("msgpack")
+            includeDirs { allHeaders("./src/nativeMain/resources/") }
+        }
+        val jsonc by main.cinterops.creating {
+            defFile("src/nativeInterop/cinterop/jsonc.def")
+            packageName("json")
             includeDirs { allHeaders("./src/nativeMain/resources/") }
         }
         binaries {
