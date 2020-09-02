@@ -6,7 +6,7 @@ import msgpack.msgpack_sbuffer_new
 
 fun main() {
     println("hello world")
-    zloop_new()
-    msgpack_sbuffer_new()
-    json_c_version_num()
+    println(zloop_new())
+    println(msgpack_sbuffer_new())
+    println(json_c_version_num())
 }

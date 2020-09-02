@@ -1,5 +1,5 @@
 headers = msgpack.h
-compilerOpts.linux = -I/usr/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -Imsgpackc
-linkerOpts.linux = -L/usr/local/lib -lmsgpackc
+compilerOpts.linux = -I/usr/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -Imsgpackc -Ilibmsgpackc
+linkerOpts.linux = -L/usr/lib/x86_64-linux-gnu -lmsgpackc
 linkerOpts.osx = -L/opt/local/lib -L/usr/local/opt/msgpackc/lib -lmsgpackc
 linkerOpts.mingw = -lmsgpackc
