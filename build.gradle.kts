@@ -1,12 +1,17 @@
 plugins {
     kotlin("multiplatform") version "1.4.0"
+    id("maven-publish")
 }
 group = "kscience.khala"
 version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
+
+val mingwPath = File(System.getenv("MINGW64_DIR") ?: "C:/msys64/mingw64")
+
 kotlin {
     jvm {
         compilations.all {
@@ -33,6 +38,17 @@ kotlin {
     }
 
     nativeTarget.apply {
+        val main by compilations.getting
+        val libczmq by main.cinterops.creating {
+            defFile("src/nativeInterop/cinterop/libczmq.def")
+            packageName("czmq")
+            includeDirs { allHeaders("./src/nativeMain/resources/") }
+        }
+        val msgpack by main.cinterops.creating {
+            defFile("src/nativeInterop/cinterop/msgpack.def")
+            packageName("msgpack")
+            includeDirs { allHeaders("./src/nativeMain/resources/") }
+        }
         binaries {
             executable {
                 entryPoint = "kscience.khala.internal.main"
