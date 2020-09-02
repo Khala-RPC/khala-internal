@@ -1,5 +1,6 @@
-headers = json-c/json_object.h json_object.h json.h json-c/json.h
+headers = json.h
 compilerOpts.linux = -I/usr/include -I/usr/local/include -I/usr/local/include/json-c -I/usr/include/x86_64-linux-gnu -Ijson-c
 linkerOpts.linux = -L/usr/lib/x86_64-linux-gnu -ljson-c
 linkerOpts.osx = -L/opt/local/lib -L/usr/local/opt/json-c/lib -ljson-c
-linkerOpts.mingw = -ljson-c
+compilerOpts.mingw = -Isrc/nativeMain/resources/jsonc -I/mingw64/include -Imingw64/include -I../include -v
+linkerOpts.mingw = -L/mingw64/bin -Lmingw64/bin -L../lib -L../bin -ljson-c -v

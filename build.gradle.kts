@@ -42,21 +42,21 @@ kotlin {
         val libczmq by main.cinterops.creating {
             defFile("src/nativeInterop/cinterop/libczmq.def")
             packageName("czmq")
-            includeDirs { allHeaders("./src/nativeMain/resources/") }
         }
         val msgpackc by main.cinterops.creating {
             defFile("src/nativeInterop/cinterop/msgpackc.def")
             packageName("msgpack")
-            includeDirs { allHeaders("./src/nativeMain/resources/") }
         }
         val jsonc by main.cinterops.creating {
             defFile("src/nativeInterop/cinterop/jsonc.def")
             packageName("json")
-            includeDirs { allHeaders("./src/nativeMain/resources/") }
         }
         binaries {
             executable {
                 entryPoint = "kscience.khala.internal.main"
+            }
+            staticLib {
+                baseName = "khala-internal-static"
             }
             sharedLib {
                 baseName = "khala-internal"
