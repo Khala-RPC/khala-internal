@@ -2,5 +2,5 @@ headers = czmq.h
 compilerOpts.linux = -I/usr/include -I/usr/include/x86_64-linux-gnu -Ilibczmq
 linkerOpts.linux = -L/usr/lib/x86_64-linux-gnu -lczmq
 linkerOpts.osx = -L/opt/local/lib -L/usr/local/opt/libczmq/lib -lczmq
-compilerOpts.mingw = -Isrc/nativeMain/resources/libczmq -Izeromq -I/mingw64/include -Imingw64/include -I../include -v
-linkerOpts.mingw = -L/mingw64/bin -Lmingw64/bin -L../lib -L../bin -lzmq -lczmq -v
+compilerOpts.mingw = -Isrc/nativeMain/resources/headers/libczmq -v
+linkerOpts.mingw = -Lsrc/nativeMain/resources/windowslibs -lczmq

@@ -1,8 +1,8 @@
 package kscience.khala.internal
 
-import czmq.zloop_new
-import json.json_c_version_num
-import msgpack.msgpack_sbuffer_new
+import kscience.khala.internal.cinterop.czmq.zloop_new
+import kscience.khala.internal.cinterop.json.json_c_version_num
+import kscience.khala.internal.cinterop.msgpack.msgpack_sbuffer_new
 
 fun main() {
     println("hello world")
