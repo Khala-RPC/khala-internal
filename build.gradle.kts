@@ -19,8 +19,9 @@ kotlin {
         }
     }
     // Common code between browser and node.js
-    js {
-
+    js("jsCommon") {
+        browser()
+        nodejs()
     }
     js("jsBrowser") {
         browser {
@@ -30,12 +31,13 @@ kotlin {
                     webpackConfig.cssSupport.enabled = true
                 }
             }
+            binaries.executable()
         }
 
     }
     js("jsNode") {
         nodejs {
-
+            binaries.executable()
         }
     }
     val hostOs = System.getProperty("os.name")
@@ -94,23 +96,23 @@ kotlin {
                 implementation(kotlin("test-junit5"))
             }
         }
-        val jsMain by getting
-        val jsTest by getting {
+        val jsCommonMain by getting
+        val jsCommonTest by getting {
             dependencies {
                 implementation(kotlin("test-js"))
             }
         }
         val jsBrowserMain by getting {
-            dependsOn(jsMain)
+            dependsOn(jsCommonMain)
         }
         val jsBrowserTest by getting {
-            dependsOn(jsTest)
+            dependsOn(jsCommonTest)
         }
         val jsNodeMain by getting {
-            dependsOn(jsMain)
+            dependsOn(jsCommonMain)
         }
         val jsNodeTest by getting {
-            dependsOn(jsTest)
+            dependsOn(jsCommonTest)
         }
         val nativeMain by getting
         val nativeTest by getting
