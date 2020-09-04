@@ -114,7 +114,7 @@ kotlin {
         val jsNodeMain by getting {
             dependsOn(jsCommonMain)
             dependencies {
-                implementation(npm(name = "zeromq", version = "6.0.0-beta.6"))
+                implementation(npm(name = "zeromq", version = "5.2.0"))
             }
         }
         val jsNodeTest by getting {
