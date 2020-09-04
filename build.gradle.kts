@@ -18,7 +18,11 @@ kotlin {
             kotlinOptions.jvmTarget = "1.8"
         }
     }
+    // Common code between browser and node.js
     js {
+
+    }
+    js("jsBrowser") {
         browser {
             testTask {
                 useKarma {
@@ -26,6 +30,12 @@ kotlin {
                     webpackConfig.cssSupport.enabled = true
                 }
             }
+        }
+
+    }
+    js("jsNode") {
+        nodejs {
+
         }
     }
     val hostOs = System.getProperty("os.name")
@@ -89,6 +99,18 @@ kotlin {
             dependencies {
                 implementation(kotlin("test-js"))
             }
+        }
+        val jsBrowserMain by getting {
+            dependsOn(jsMain)
+        }
+        val jsBrowserTest by getting {
+            dependsOn(jsTest)
+        }
+        val jsNodeMain by getting {
+            dependsOn(jsMain)
+        }
+        val jsNodeTest by getting {
+            dependsOn(jsTest)
         }
         val nativeMain by getting
         val nativeTest by getting
