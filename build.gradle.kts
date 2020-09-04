@@ -104,12 +104,18 @@ kotlin {
         }
         val jsBrowserMain by getting {
             dependsOn(jsCommonMain)
+            dependencies {
+                implementation(npm(name = "@prodatalab/jszmq", version = "0.2.2"))
+            }
         }
         val jsBrowserTest by getting {
             dependsOn(jsCommonTest)
         }
         val jsNodeMain by getting {
             dependsOn(jsCommonMain)
+            dependencies {
+                implementation(npm(name = "zeromq", version = "6.0.0-beta.6"))
+            }
         }
         val jsNodeTest by getting {
             dependsOn(jsCommonTest)
