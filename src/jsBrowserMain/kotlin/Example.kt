@@ -5,4 +5,5 @@ fun main() {
     window.alert("AlertBrowserJS!")
     val zmq = js("require(\"@prodatalab/jszmq\")")
     console.log(zmq.socket("dealer"))
+    JsCommonClass().lol()
 }
