@@ -36,7 +36,7 @@ jobs:
         uses: gradle/wrapper-validation-action@v1
 
       - name: Build Linux
-      - run: ./gradlew build
+        run: ./gradlew build
 
       - name: Bundle the build report
         if: failure()
