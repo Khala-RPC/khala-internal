@@ -21,7 +21,7 @@ jobs:
 
       - name: Install Windows dependencies
         if: matrix.os == 'windows-latest'
-        run: Install-Module PackageManagement -Force -Repository PSGallery -AllowPrerelease; Install-Module posh-git -Scope CurrentUser -Force; Import-Module posh-git
+        run: Register-PackageSource -Name nuget.org -Location https://www.nuget.org/api/v2 -ProviderName NuGet; Install-Module posh-git -Scope CurrentUser -Force; Import-Module posh-git
 
       - name: Set up cache
         uses: actions/cache@v2
