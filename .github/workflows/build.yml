@@ -39,7 +39,7 @@ jobs:
         run: find /usr/ -name json.h
 
       - name: Find l
-        run find /usr/ -name libjson*
+        run: find /usr/ -name libjson*
 
       - name: Build Linux
         run: ./gradlew build
