@@ -6,6 +6,7 @@ import khala.internal.cinterop.msgpack.msgpack_sbuffer_new
 
 fun main() {
     println("hello world")
+    println("rofl")
     println(zloop_new())
     println(msgpack_sbuffer_new())
     println(json_c_version_num())
