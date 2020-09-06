@@ -22,7 +22,7 @@ jobs:
         uses: actions/checkout@v2
         
       - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install libzmq3-dev libczmq-dev libjson-c5 libmsgpack-dev nodejs chromium-browser
+        run: sudo apt-get update && sudo apt-get install libzmq3-dev libczmq-dev libjson-c3 libmsgpack-dev nodejs chromium-browser
 
       - name: Set up cache
         uses: actions/cache@v2
