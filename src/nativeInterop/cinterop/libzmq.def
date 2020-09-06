@@ -3,4 +3,4 @@ compilerOpts.linux = -I/usr/include -I/usr/local/include
 linkerOpts.linux = -L/usr/lib/x86_64-linux-gnu -lzmq
 linkerOpts.osx = -L/opt/local/lib -L/usr/local/opt/libczmq/lib -lzmq
 compilerOpts.mingw = -Isrc/nativeMain/resources/mingw/include/libzmq
-linkerOpts.mingw = -Lsrc/nativeMain/resources/mingw/bin -lzmq
+linkerOpts.mingw = -Lsrc/nativeMain/resources/mingw/bin -lzmq -v
