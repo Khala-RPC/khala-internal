@@ -1,19 +1,29 @@
 plugins {
     kotlin("multiplatform") version "1.4.0"
+    id("maven-publish")
 }
 group = "kscience.khala"
 version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
+
+val mingwPath = File(System.getenv("MINGW64_DIR") ?: "C:/msys64/mingw64")
+
 kotlin {
     jvm {
         compilations.all {
             kotlinOptions.jvmTarget = "1.8"
         }
     }
-    js {
+    // Common code between browser and node.js
+    js("jsCommon") {
+        browser()
+        nodejs()
+    }
+    js("jsBrowser") {
         browser {
             testTask {
                 useKarma {
@@ -21,6 +31,13 @@ kotlin {
                     webpackConfig.cssSupport.enabled = true
                 }
             }
+            binaries.executable()
+        }
+
+    }
+    js("jsNode") {
+        nodejs {
+            binaries.executable()
         }
     }
     val hostOs = System.getProperty("os.name")
@@ -32,7 +49,39 @@ kotlin {
         else -> throw GradleException("Host OS is not supported in Kotlin/Native.")
     }
 
-    
+    nativeTarget.apply {
+        val main by compilations.getting
+        val msgpackc by main.cinterops.creating {
+            defFile("src/nativeInterop/cinterop/msgpackc.def")
+            packageName("kscience.khala.internal.cinterop.msgpack")
+        }
+        val jsonc by main.cinterops.creating {
+            defFile("src/nativeInterop/cinterop/jsonc.def")
+            packageName("kscience.khala.internal.cinterop.json")
+        }
+        val libzmq by main.cinterops.creating {
+            defFile("src/nativeInterop/cinterop/libzmq.def")
+            packageName("kscience.khala.internal.cinterop.zmq")
+        }
+        val libczmq by main.cinterops.creating {
+            defFile("src/nativeInterop/cinterop/libczmq.def")
+            packageName("kscience.khala.internal.cinterop.czmq")
+        }
+        binaries {
+            executable {
+                entryPoint = "kscience.khala.internal.main"
+            }
+            /*
+            staticLib {
+                baseName = "khala-internal-static"
+            }
+            sharedLib {
+                baseName = "khala-internal"
+            }
+            */
+        }
+    }
+
     sourceSets {
         val commonMain by getting
         val commonTest by getting {
@@ -47,11 +96,29 @@ kotlin {
                 implementation(kotlin("test-junit5"))
             }
         }
-        val jsMain by getting
-        val jsTest by getting {
+        val jsCommonMain by getting
+        val jsCommonTest by getting {
             dependencies {
                 implementation(kotlin("test-js"))
             }
+        }
+        val jsBrowserMain by getting {
+            dependsOn(jsCommonMain)
+            dependencies {
+                implementation(npm(name = "@prodatalab/jszmq", version = "0.2.2"))
+            }
+        }
+        val jsBrowserTest by getting {
+            dependsOn(jsCommonTest)
+        }
+        val jsNodeMain by getting {
+            dependsOn(jsCommonMain)
+            dependencies {
+                implementation(npm(name = "zeromq", version = "5.2.0"))
+            }
+        }
+        val jsNodeTest by getting {
+            dependsOn(jsCommonTest)
         }
         val nativeMain by getting
         val nativeTest by getting

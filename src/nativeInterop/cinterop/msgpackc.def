@@ -1,0 +1,6 @@
+headers = msgpack.h
+compilerOpts.linux = -I/usr/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -Imsgpackc -Ilibmsgpackc
+linkerOpts.linux = -L/usr/lib/x86_64-linux-gnu -lmsgpackc
+linkerOpts.osx = -L/opt/local/lib -L/usr/local/opt/msgpackc/lib -lmsgpackc
+compilerOpts.mingw = -Isrc/nativeMain/resources/mingw/include/msgpackc -v
+linkerOpts.mingw = -Lsrc/nativeMain/resources/mingw/bin -lmsgpackc
