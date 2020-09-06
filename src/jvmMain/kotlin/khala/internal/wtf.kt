@@ -1,4 +1,4 @@
-package kscience.khala.internal
+package khala.internal
 
 import java.io.File
 

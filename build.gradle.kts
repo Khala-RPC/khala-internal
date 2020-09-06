@@ -2,8 +2,8 @@ plugins {
     kotlin("multiplatform") version "1.4.0"
     id("maven-publish")
 }
-group = "kscience.khala"
-version = "1.0-SNAPSHOT"
+group = "khala"
+version = "0.0.1-alpha"
 
 repositories {
     mavenCentral()
@@ -53,23 +53,23 @@ kotlin {
         val main by compilations.getting
         val msgpackc by main.cinterops.creating {
             defFile("src/nativeInterop/cinterop/msgpackc.def")
-            packageName("kscience.khala.internal.cinterop.msgpack")
+            packageName("khala.internal.cinterop.msgpack")
         }
         val jsonc by main.cinterops.creating {
             defFile("src/nativeInterop/cinterop/jsonc.def")
-            packageName("kscience.khala.internal.cinterop.json")
+            packageName("khala.internal.cinterop.json")
         }
         val libzmq by main.cinterops.creating {
             defFile("src/nativeInterop/cinterop/libzmq.def")
-            packageName("kscience.khala.internal.cinterop.zmq")
+            packageName("khala.internal.cinterop.zmq")
         }
         val libczmq by main.cinterops.creating {
             defFile("src/nativeInterop/cinterop/libczmq.def")
-            packageName("kscience.khala.internal.cinterop.czmq")
+            packageName("khala.internal.cinterop.czmq")
         }
         binaries {
             executable {
-                entryPoint = "kscience.khala.internal.main"
+                entryPoint = "khala.internal.main"
             }
             /*
             staticLib {
