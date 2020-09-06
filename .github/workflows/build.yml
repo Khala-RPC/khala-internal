@@ -35,6 +35,12 @@ jobs:
       - name: Validate Gradle Wrapper
         uses: gradle/wrapper-validation-action@v1
 
+      - name: Find i
+        run: find /usr/ -name json.h
+
+      - name: Find l
+        run find /usr/ -name libjson*
+
       - name: Build Linux
         run: ./gradlew build
 
