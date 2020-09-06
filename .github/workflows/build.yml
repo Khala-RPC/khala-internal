@@ -40,7 +40,10 @@ jobs:
 
       - name: lol
         run: find /usr/ -name libjson*
-    
+
+      - name: Build Linux
+      - run: ./gradlew build
+
       - name: Bundle the build report
         if: failure()
         run: find . -type d -name 'reports' | zip -@ -r build-reports.zip

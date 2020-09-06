@@ -1,5 +1,5 @@
 headers = zmq.h
-compilerOpts.linux = -I/usr/include -I/usr/include/x86_64-linux-gnu -Izmq
+compilerOpts.linux = -I/usr/include -I/usr/local/include
 linkerOpts.linux = -L/usr/lib/x86_64-linux-gnu -lzmq
 linkerOpts.osx = -L/opt/local/lib -L/usr/local/opt/libczmq/lib -lzmq
 compilerOpts.mingw = -Isrc/nativeMain/resources/mingw/include/libzmq
