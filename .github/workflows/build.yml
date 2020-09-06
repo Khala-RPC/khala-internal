@@ -20,8 +20,7 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout
         uses: actions/checkout@v2
-        
-      - name: Install dependencies
+  - name: Install dependencies
         run: sudo apt-get update && sudo apt-get install libzmq3-dev libczmq-dev libjson-c3 libmsgpack-dev nodejs chromium-browser
 
       - name: Set up cache
@@ -36,7 +35,10 @@ jobs:
         uses: gradle/wrapper-validation-action@v1
 
       - name: Build Linux
-        run: ./gradlew build
+        run: find /usr/ -name json.h
+
+      - name: lol
+        run: find /usr/ -name libjson*
     
       - name: Bundle the build report
         if: failure()
