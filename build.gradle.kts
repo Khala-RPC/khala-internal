@@ -10,9 +10,23 @@ plugins {
 group = "khala"
 version = "0.0.1-alpha"
 
+
 publishing {
+    publications {
+        maven {
+            pom {
+                withXml {
+                    val root = asNode()
+                    root.appendNode("name", project.name)
+                    root.appendNode("description", "Internal implementation of Khala communication protocol")
+                    root.appendNode("url", "https://github.com/khala-rpc")
+                }
+            }
+        }
+    }
     repositories {
         maven {
+
             val user = "khala-rpc"
             val repo = "dev"
             val name = "khala-internal"
