@@ -93,7 +93,7 @@ kotlin {
             packageName("khala.internal.cinterop.zmq")
         }
         val libczmq by main.cinterops.creating {
-            defFile("src/nativeInterop/cinterop/libczmq.def")
+            defFile("src/nativeInterop/cinterop/czmq.def")
             packageName("khala.internal.cinterop.czmq")
         }
         binaries {

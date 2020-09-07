@@ -15,17 +15,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Roft
-        if: matrix.os == 'windows-latest'
-        run: git help
-
       - name: Install Linux dependencies
         if: matrix.os == 'ubuntu-latest'
         run: sudo apt-get update && sudo apt-get install gcc-multilib libzmq3-dev libczmq-dev libjson-c-dev libmsgpack-dev nodejs chromium-browser
 
       - name: Install Windows dependencies
         if: matrix.os == 'windows-latest'
-        run: Install-Module PackageManagement -Force -Repository PSGallery -AllowPrerelease; Install-Module posh-git -Scope CurrentUser -Force; Import-Module posh-git
+        run:
 
       - name: Set up cache
         uses: actions/cache@v2

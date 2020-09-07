@@ -1,0 +1,1 @@
+Here should lie contents from https://github.com/msgpack/msgpack-c/tree/c_master/include

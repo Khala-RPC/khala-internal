@@ -2,6 +2,10 @@
 /build/
 /.idea/
 
+# Ignore C headers that are used to build library for MinGW
+*.h
+*.am
+
 # Ignore Gradle GUI config
 gradle-app.setting
 
