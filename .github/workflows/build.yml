@@ -37,6 +37,7 @@ jobs:
           cd ../;
 
       - name: Install Windows dependencies 2
+        if: matrix.os == 'windows-latest'
         run: >-
           git clone https://github.com/json-c/json-c.git;
           cd json-c;
