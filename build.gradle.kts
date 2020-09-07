@@ -1,9 +1,25 @@
 plugins {
     kotlin("multiplatform") version "1.4.0"
-    id("maven-publish")
+    maven
+    `maven-publish`
 }
 group = "khala"
 version = "0.0.1-alpha"
+
+publishing {
+    repositories {
+        maven {
+            val user = "khala-rpc"
+            val repo = "dev"
+            val name = "khala-internal"
+            url = uri("https://api.bintray.com/maven/$user/$repo/$name/;publish=0;override=1")
+            credentials {
+                username = System.getenv("BINTRAY_USER")
+                password = System.getenv("BINTRAY_API_KEY")
+            }
+        }
+    }
+}
 
 repositories {
     mavenCentral()
@@ -18,12 +34,7 @@ kotlin {
             kotlinOptions.jvmTarget = "1.8"
         }
     }
-    // Common code between browser and node.js
-    js("jsCommon") {
-        browser()
-        nodejs()
-    }
-    js("jsBrowser") {
+    js {
         browser {
             testTask {
                 useKarma {
@@ -33,19 +44,19 @@ kotlin {
             }
             binaries.executable()
         }
-
-    }
-    js("jsNode") {
         nodejs {
             binaries.executable()
         }
     }
+
     val hostOs = System.getProperty("os.name")
+    val isLinuxX64 = hostOs == "Linux"
     val isMingwX64 = hostOs.startsWith("Windows")
+    val isMacOSX64 = hostOs == "Mac OS X"
     val nativeTarget = when {
-        hostOs == "Mac OS X" -> macosX64("native")
-        hostOs == "Linux" -> linuxX64("native")
-        isMingwX64 -> mingwX64("native")
+        isLinuxX64 -> linuxX64()
+        isMingwX64 -> mingwX64()
+        isMacOSX64 -> macosX64()
         else -> throw GradleException("Host OS is not supported in Kotlin/Native.")
     }
 
@@ -68,17 +79,21 @@ kotlin {
             packageName("khala.internal.cinterop.czmq")
         }
         binaries {
-            executable {
-                entryPoint = "khala.internal.main"
-            }
-            /*
             staticLib {
                 baseName = "khala-internal-static"
             }
             sharedLib {
                 baseName = "khala-internal"
             }
-            */
+        }
+    }
+
+    configure(listOf(targets["metadata"], jvm(), js())) {
+        mavenPublication {
+            val targetPublication = this@mavenPublication
+            tasks.withType<AbstractPublishToMaven>()
+                .matching { it.publication == targetPublication }
+                .all { onlyIf { isLinuxX64 } }
         }
     }
 
@@ -96,31 +111,51 @@ kotlin {
                 implementation(kotlin("test-junit5"))
             }
         }
-        val jsCommonMain by getting
-        val jsCommonTest by getting {
-            dependencies {
-                implementation(kotlin("test-js"))
-            }
-        }
-        val jsBrowserMain by getting {
-            dependsOn(jsCommonMain)
+        val jsMain by getting {
             dependencies {
                 implementation(npm(name = "@prodatalab/jszmq", version = "0.2.2"))
             }
         }
-        val jsBrowserTest by getting {
-            dependsOn(jsCommonTest)
+        val jsTest by getting {
+            dependencies {
+                implementation(kotlin("test-js"))
+            }
         }
+        /*
         val jsNodeMain by getting {
-            dependsOn(jsCommonMain)
             dependencies {
                 implementation(npm(name = "zeromq", version = "5.2.0"))
             }
+        }*/
+        val nativeMain by creating {
+            dependsOn(commonMain)
         }
-        val jsNodeTest by getting {
-            dependsOn(jsCommonTest)
+        val nativeTest by creating {
+            dependsOn(commonTest)
         }
-        val nativeMain by getting
-        val nativeTest by getting
+        if (isMingwX64) {
+            val mingwX64Main by getting {
+                dependsOn(nativeMain)
+            }
+            val mingwX64Test by getting {
+                dependsOn(nativeTest)
+            }
+        }
+        if (isLinuxX64) {
+            val linuxX64Main by getting {
+                dependsOn(nativeMain)
+            }
+            val linuxX64Test by getting {
+                dependsOn(nativeTest)
+            }
+        }
+        if (isMacOSX64) {
+            val macOSX64Main by getting {
+                dependsOn(nativeMain)
+            }
+            val macOSX64Test by getting {
+                dependsOn(nativeTest)
+            }
+        }
     }
 }
