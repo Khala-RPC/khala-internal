@@ -31,8 +31,6 @@ jobs:
           cd libzmq;
           git init;
           git remote add origin -f https://github.com/zeromq/libzmq.git;
-          git sparse-checkout init;
-          git sparse-checkout set include/ *.h;
           git pull origin master;
           Copy-Item -Path "./include/*" -Destination "../khala-internal/src/mingwX64Main/resources/include/libzmq" -Recurse;
           cd ../;
@@ -40,8 +38,6 @@ jobs:
           cd czmq;
           git init;
           git remote add origin -f https://github.com/zeromq/czmq.git;
-          git sparse-checkout init;
-          git sparse-checkout set include/ *.h;
           git pull origin master;
           Copy-Item -Path "./include/*" -Destination "../khala-internal/src/mingwX64Main/resources/include/czmq" -Recurse;
           cd ../;
@@ -49,17 +45,13 @@ jobs:
           cd jsonc;
           git init;
           git remote add origin -f https://github.com/json-c/json-c.git;
-          git sparse-checkout init;
-          git sparse-checkout set !?/* *.h;
           git pull origin master;
-          Copy-Item -Path "./*" -Destination "../khala-internal/src/mingwX64Main/resources/include/jsonc" -Recurse;
+          Copy-Item -Path "./*" -Destination "../khala-internal/src/mingwX64Main/resources/include/jsonc";
           cd ../;
           New-Item -Path . -Name "msgpackc" -ItemType "directory";
           cd msgpackc;
           git init;
           git remote add origin -f https://github.com/msgpack/msgpack-c.git;
-          git sparse-checkout init;
-          git sparse-checkout set include/ *.h;
           git pull origin c_master;
           Copy-Item -Path "./include/*" -Destination "../khala-internal/src/mingwX64Main/resources/include/msgpackc" -Recurse;
           cd ../khala-internal;
