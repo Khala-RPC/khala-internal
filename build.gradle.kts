@@ -16,10 +16,10 @@ publishing {
             val user = "khala-rpc"
             val repo = "dev"
             val name = "khala-internal"
-            url = uri("https://api.bintray.com/maven/$user/$repo/$name")
+            url = uri("https://api.bintray.com/maven/$user/$repo/$name/;publish=1;override=1")
             credentials {
                 username = properties["bintray_user"].toString()
-                username = properties["bintray_api_key"].toString()
+                password = properties["bintray_api_key"].toString()
             }
         }
     }
