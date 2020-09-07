@@ -23,7 +23,7 @@ jobs:
           gcc-multilib libzmq3-dev libczmq-dev libjson-c-dev
           libmsgpack-dev nodejs chromium-browser
 
-      - name: Install Windows dependencies
+      - name: Install Windows dependencies 1
         if: matrix.os == 'windows-latest'
         run: >-
           cd ../;
@@ -35,6 +35,9 @@ jobs:
           cd czmq;
           Copy-Item -Path ./include/* -Destination ../khala-internal/src/mingwX64Main/resources/include/czmq -Recurse;
           cd ../;
+
+      - name: Install Windows dependencies 2
+        run: >-
           git clone https://github.com/json-c/json-c.git;
           cd json-c;
           Copy-Item -Path ./* -Destination ../khala-internal/src/mingwX64Main/resources/include/jsonc;
@@ -44,7 +47,8 @@ jobs:
           git checkout c_master;
           Copy-Item -Path ./include/msgpack/* -Destination ../khala-internal/src/mingwX64Main/resources/include/msgpackc/msgpack -Recurse;
           Copy-Item -Path ./msgpack.h -Destination ../khala-internal/src/mingwX64Main/resources/include/msgpackc/msgpack.h -Recurse;
-          cd ../khala-internal
+          cd ../khala-internal;
+
 
       - name: Set up cache
         uses: actions/cache@v2
