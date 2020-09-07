@@ -48,7 +48,7 @@ jobs:
           cd msgpack-c;
           git checkout c_master;
           Copy-Item -Path ./include/msgpack/* -Destination ../khala-internal/src/mingwX64Main/resources/include/msgpackc/msgpack -Recurse;
-          Copy-Item -Path ./msgpack.h -Destination ../khala-internal/src/mingwX64Main/resources/include/msgpackc/msgpack.h -Recurse;
+          Copy-Item -Path ./msgpack.h -Destination ../khala-internal/src/mingwX64Main/resources/include/msgpackc -Recurse;
           cd ../khala-internal;
 
 
