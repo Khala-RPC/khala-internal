@@ -36,11 +36,14 @@ jobs:
 
       - name: Build Linux
         if: matrix.os == 'ubuntu-latest'
-        run: ./gradlew build publish
+        run: ./gradlew build
 
       - name: Build Windows
         if: matrix.os == 'windows-latest'
-        run: ./gradlew linkDebugExecutableNative linkDebugTestNative; Copy-Item src/nativeMain/resources/mingw/bin/* build/bin/native/debugTest/; ./gradlew nativeTest build publish
+        run: ./gradlew linkDebugExecutableNative linkDebugTestNative; Copy-Item src/mingwX64Main/resources/bin/* build/bin/native/debugTest/; ./gradlew nativeTest build
+
+      - name: Publish dev package
+        run: ./gradlew publish
 
       - name: Bundle the build report
         if: failure()
