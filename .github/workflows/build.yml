@@ -34,11 +34,12 @@ jobs:
           git clone https://github.com/zeromq/czmq.git;
           cd czmq;
           Copy-Item -Path ./include/* -Destination ../khala-internal/src/mingwX64Main/resources/include/czmq -Recurse;
-          cd ../;
+          cd ../khala-internal;
 
       - name: Install Windows dependencies 2
         if: matrix.os == 'windows-latest'
         run: >-
+          cd ../;
           git clone https://github.com/json-c/json-c.git;
           cd json-c;
           Copy-Item -Path ./*.h -Destination ../khala-internal/src/mingwX64Main/resources/include/jsonc -Force;
