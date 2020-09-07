@@ -5,8 +5,10 @@
 # Ignore C headers that are used to build library for MinGW
 *.h
 *.am
-# But do not ignore json_config.h because it is generated while building json-c
+# But do not ignore headers that are generated while building from sources
 !src/mingwX64Main/resources/include/jsonc/json_config.h
+!src/mingwX64Main/resources/include/msgpackc/pack_template.h
+!src/mingwX64Main/resources/include/msgpackc/sysdep.h
 
 # Ignore Gradle GUI config
 gradle-app.setting
