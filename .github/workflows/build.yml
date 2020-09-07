@@ -30,7 +30,7 @@ jobs:
           New-Item -Path . -Name libzmq -ItemType "directory";
           cd libzmq;
           git init;
-          git remote add origin -f https://github.com/zeromq/libzmq.git;
+          git remote add origin https://github.com/zeromq/libzmq.git;
           git pull origin master;
           Copy-Item -Path ./include/* -Destination ../khala-internal/src/mingwX64Main/resources/include/libzmq -Recurse;
           cd ../;
@@ -41,7 +41,7 @@ jobs:
           echo 3;
           git init;
           echo 4;
-          git remote add origin -f https://github.com/zeromq/czmq.git;
+          git remote add origin https://github.com/zeromq/czmq.git;
           echo 5;
           git pull origin master;
           echo 6;
@@ -52,14 +52,14 @@ jobs:
           echo 8;
           cd jsonc;
           git init;
-          git remote add origin -f https://github.com/json-c/json-c.git;
+          git remote add origin https://github.com/json-c/json-c.git;
           git pull origin master;
           Copy-Item -Path ./* -Destination ../khala-internal/src/mingwX64Main/resources/include/jsonc;
           cd ../;
           New-Item -Path . -Name msgpackc -ItemType "directory";
           cd msgpackc;
           git init;
-          git remote add origin -f https://github.com/msgpack/msgpack-c.git;
+          git remote add origin https://github.com/msgpack/msgpack-c.git;
           git pull origin c_master;
           Copy-Item -Path ./include/* -Destination ../khala-internal/src/mingwX64Main/resources/include/msgpackc -Recurse;
           cd ../khala-internal;
