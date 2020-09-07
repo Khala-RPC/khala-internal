@@ -7,8 +7,8 @@
 *.am
 # But do not ignore headers that are generated while building from sources
 !src/mingwX64Main/resources/include/jsonc/json_config.h
-!src/mingwX64Main/resources/include/msgpackc/pack_template.h
-!src/mingwX64Main/resources/include/msgpackc/sysdep.h
+!src/mingwX64Main/resources/include/msgpackc/msgpack/pack_template.h
+!src/mingwX64Main/resources/include/msgpackc/msgpack/sysdep.h
 
 # Ignore Gradle GUI config
 gradle-app.setting
