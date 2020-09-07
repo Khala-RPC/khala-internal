@@ -1,8 +1,12 @@
+
+
 plugins {
     kotlin("multiplatform") version "1.4.0"
     maven
     `maven-publish`
 }
+
+
 group = "khala"
 version = "0.0.1-alpha"
 
@@ -14,8 +18,8 @@ publishing {
             val name = "khala-internal"
             url = uri("https://api.bintray.com/maven/$user/$repo/$name")
             credentials {
-                username = System.getenv("BINTRAY_USER")
-                password = System.getenv("BINTRAY_API_KEY")
+                username = properties["bintray_user"].toString()
+                username = properties["bintray_api_key"].toString()
             }
         }
     }
