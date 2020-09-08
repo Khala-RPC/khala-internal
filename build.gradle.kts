@@ -1,15 +1,11 @@
-
-
 plugins {
     kotlin("multiplatform") version "1.4.0"
     maven
     `maven-publish`
 }
 
-
 group = "khala"
 version = "0.0.1-alpha"
-
 
 publishing {
     publications {
@@ -26,7 +22,6 @@ publishing {
     }
     repositories {
         maven {
-
             val user = "khala-rpc"
             val repo = "dev"
             val name = "khala-internal"
@@ -43,8 +38,6 @@ repositories {
     mavenCentral()
     mavenLocal()
 }
-
-val mingwPath = File(System.getenv("MINGW64_DIR") ?: "C:/msys64/mingw64")
 
 kotlin {
     jvm {
