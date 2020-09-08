@@ -62,11 +62,13 @@ kotlin {
             }
             binaries.executable()
         }
+    }
+    js("node") {
+        attributes.attribute(Attribute.of(String::class.java), "node")
         nodejs {
             binaries.executable()
         }
     }
-
     val hostOs = System.getProperty("os.name")
     val isLinuxX64 = hostOs == "Linux"
     val isMingwX64 = hostOs.startsWith("Windows")
@@ -106,7 +108,7 @@ kotlin {
         }
     }
 
-    configure(listOf(targets["metadata"], jvm(), js())) {
+    configure(listOf(targets["metadata"], jvm(), js(), js("node"))) {
         mavenPublication {
             val targetPublication = this@mavenPublication
             tasks.withType<AbstractPublishToMaven>()
@@ -139,12 +141,14 @@ kotlin {
                 implementation(kotlin("test-js"))
             }
         }
-        /*
-        val jsNodeMain by getting {
+        val nodeMain by getting {
             dependencies {
                 implementation(npm(name = "zeromq", version = "5.2.0"))
             }
-        }*/
+        }
+        val nodeTest by getting {
+
+        }
         val nativeMain by creating {
             dependsOn(commonMain)
         }
