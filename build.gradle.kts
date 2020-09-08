@@ -39,6 +39,9 @@ repositories {
     mavenLocal()
 }
 
+val mingwPath = File(System.getenv("MINGW64_DIR") ?: "C:/msys64/mingw64")
+
+
 kotlin {
     jvm {
         compilations.all {
@@ -118,7 +121,11 @@ kotlin {
                 implementation(kotlin("test-annotations-common"))
             }
         }
-        val jvmMain by getting
+        val jvmMain by getting {
+            dependencies {
+                implementation("org.zeromq:jeromq:0.5.2")
+            }
+        }
         val jvmTest by getting {
             dependencies {
                 implementation(kotlin("test-junit5"))
@@ -137,10 +144,13 @@ kotlin {
         val nodeMain by getting {
             dependencies {
                 implementation(npm(name = "zeromq", version = "5.2.0"))
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.3.9-native-mt")
             }
         }
         val nodeTest by getting {
-
+            dependencies {
+                implementation(kotlin("test-js"))
+            }
         }
         val nativeMain by creating {
             dependsOn(commonMain)
