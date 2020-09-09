@@ -4,7 +4,7 @@ internal val http = js("require('https')")
 
 internal class ZmqSocket(val socket: dynamic, val webSocket: Boolean) {
 
-    fun connect(address: dynamic) {
+    fun connect(address: String) {
         if (isClosed) println("Socket is already closed!")
         else socket.connect(address)
     }
@@ -15,7 +15,7 @@ internal class ZmqSocket(val socket: dynamic, val webSocket: Boolean) {
     var isClosed = false
     val s = http.createServer()
 
-    fun bind(address: dynamic) {
+    fun bind(address: String) {
         if (isClosed) println("Socket is already closed!")
         else if (!bindFinished) bindQueue.add(address)
         else if (!webSocket) {
@@ -34,8 +34,7 @@ internal class ZmqSocket(val socket: dynamic, val webSocket: Boolean) {
         }
         else {
             bindFinished = false
-            console.log(address)
-            socket.bind(js("'ws://localhost:12345'"))
+            socket.bind(address)
             bindFinished = true
         }
     }
@@ -45,7 +44,13 @@ internal class ZmqSocket(val socket: dynamic, val webSocket: Boolean) {
         else if (!bindFinished) shouldClose = true
         else {
             shouldClose = false
-            socket.close()
+            try {
+                socket.close()
+            }
+            catch (ex: Throwable) {
+                // TODO Properly handle early close for jszmq WS sockets (it works for zeromq.js TCP sockets already)
+                println(ex)
+            }
         }
     }
 }
