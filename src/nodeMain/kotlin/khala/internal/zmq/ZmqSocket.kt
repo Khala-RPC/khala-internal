@@ -1,21 +1,24 @@
 package khala.internal.zmq
 
-internal class ZmqSocket(val socket: dynamic) {
+internal val http = js("require('https')")
 
-    fun connect(address: String) {
+internal class ZmqSocket(val socket: dynamic, val webSocket: Boolean) {
+
+    fun connect(address: dynamic) {
         if (isClosed) println("Socket is already closed!")
         else socket.connect(address)
     }
 
     var bindFinished = true
-    val bindQueue = ArrayDeque<String>()
+    val bindQueue = ArrayDeque<dynamic>()
     var shouldClose = false
     var isClosed = false
+    val s = http.createServer()
 
-    fun bind(address: String) {
+    fun bind(address: dynamic) {
         if (isClosed) println("Socket is already closed!")
         else if (!bindFinished) bindQueue.add(address)
-        else {
+        else if (!webSocket) {
             bindFinished = false
             socket.bind(address) { err ->
                 bindFinished = true
@@ -24,11 +27,16 @@ internal class ZmqSocket(val socket: dynamic) {
                 }
                 if (bindQueue.isNotEmpty()) {
                     bind(bindQueue.removeFirst())
-                }
-                else if (shouldClose) {
+                } else if (shouldClose) {
                     close()
                 }
             }
+        }
+        else {
+            bindFinished = false
+            console.log(address)
+            socket.bind(js("'ws://localhost:12345'"))
+            bindFinished = true
         }
     }
 

@@ -133,7 +133,7 @@ kotlin {
         }
         val jsMain by getting {
             dependencies {
-                implementation(npm(name = "@prodatalab/jszmq", version = "0.2.2"))
+                implementation(npm(name = "jszmq", version = "0.1.2"))
             }
         }
         val jsTest by getting {
@@ -143,7 +143,9 @@ kotlin {
         }
         val nodeMain by getting {
             dependencies {
+                implementation(npm("url", "0.11.0"))
                 implementation(npm(name = "zeromq", version = "5.2.0"))
+                implementation(npm(name = "jszmq", version = "0.1.2"))
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.3.9-native-mt")
             }
         }
