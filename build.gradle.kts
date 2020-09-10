@@ -68,11 +68,11 @@ kotlin {
     val hostOs = System.getProperty("os.name")
     val isLinuxX64 = hostOs == "Linux"
     val isMingwX64 = hostOs.startsWith("Windows")
-    val isMacOSX64 = hostOs == "Mac OS X"
+    //val isMacOSX64 = hostOs == "Mac OS X"
     val nativeTarget = when {
         isLinuxX64 -> linuxX64()
         isMingwX64 -> mingwX64()
-        isMacOSX64 -> macosX64()
+        //isMacOSX64 -> macosX64()
         else -> throw GradleException("Host OS is not supported in Kotlin/Native.")
     }
 
@@ -114,7 +114,11 @@ kotlin {
     }
 
     sourceSets {
-        val commonMain by getting
+        val commonMain by getting {
+            dependencies {
+                implementation("co.touchlab:stately-isolate:1.1.1-a1")
+            }
+        }
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test-common"))
@@ -143,10 +147,8 @@ kotlin {
         }
         val nodeMain by getting {
             dependencies {
-                implementation(npm("url", "0.11.0"))
                 implementation(npm(name = "zeromq", version = "5.2.0"))
                 implementation(npm(name = "@prodatalab/jszmq", version = "0.2.2"))
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.3.9-native-mt")
             }
         }
         val nodeTest by getting {
@@ -176,6 +178,7 @@ kotlin {
                 dependsOn(nativeTest)
             }
         }
+        /*
         if (isMacOSX64) {
             val macOSX64Main by getting {
                 dependsOn(nativeMain)
@@ -184,5 +187,6 @@ kotlin {
                 dependsOn(nativeTest)
             }
         }
+        */
     }
 }

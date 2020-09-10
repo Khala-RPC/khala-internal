@@ -24,13 +24,21 @@ class ZmqMsgTest {
     }
 
     @Test
-    fun testVarargJsFunction() {
+    fun testVarargJsFunctionReceive() {
         val foo = js("function(f) { return function() { return f(arguments); }; }")
         val bar = foo { args ->
             assertEquals(123, args[0])
             assertEquals(3, args.length)
         }
         bar(123, 456, 789)
+    }
+
+    @Test
+    fun testVarargJsFunctionSend() {
+        val sendFun = js("function() { console.log(arguments); }")
+        val foo = js("function(sendFun) { return function(arr) { sendFun.apply(this, arr); }; }")
+        val bar = foo(sendFun)
+        bar(arrayOf(123, 456, 789))
     }
 
 }

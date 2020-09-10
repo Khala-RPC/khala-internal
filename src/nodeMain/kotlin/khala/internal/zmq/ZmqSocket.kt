@@ -1,21 +1,22 @@
 package khala.internal.zmq
 
-internal val http = js("require('https')")
+internal actual class ZmqSocket(internal val socket: dynamic, private val webSocket: Boolean) {
 
-internal class ZmqSocket(val socket: dynamic, val webSocket: Boolean) {
+    private val varargWrapper = js("function(sendFun) { return function(arr) { sendFun.apply(this, arr); }; }")
+    internal val arraySender = varargWrapper(socket.send)
 
-    fun connect(address: String) {
+    internal fun connect(address: String) {
         if (isClosed) println("Socket is already closed!")
         else socket.connect(address)
     }
 
-    var bindFinished = true
-    val bindQueue = ArrayDeque<dynamic>()
-    var shouldClose = false
-    var isClosed = false
-    val s = http.createServer()
+    private var bindFinished = true
+    private val bindQueue = ArrayDeque<dynamic>()
+    private var shouldClose = false
+    private var isClosed = false
 
-    fun bind(address: String) {
+    // Port 80 doesn't work for WebSocket (idk why)
+    internal fun bind(address: String) {
         if (isClosed) println("Socket is already closed!")
         else if (!bindFinished) bindQueue.add(address)
         else if (!webSocket) {
@@ -39,7 +40,7 @@ internal class ZmqSocket(val socket: dynamic, val webSocket: Boolean) {
         }
     }
 
-    fun close() {
+    actual fun close() {
         if (isClosed) println("Socket is already closed!")
         else if (!bindFinished) shouldClose = true
         else {

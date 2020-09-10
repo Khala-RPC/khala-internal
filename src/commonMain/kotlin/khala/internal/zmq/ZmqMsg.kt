@@ -1,20 +1,17 @@
 package khala.internal.zmq
 
-/*
-internal expect class ZmqMsg {
+expect class BinaryData
 
-    constructor()
+internal expect class ZmqMsg() {
 
     fun send(socket: ZmqSocket)
 
-    fun add(frame: ZmqFrame)
-    fun addBytes(bytes: ByteArray)
+    fun addBytes(bytes: BinaryData)
     fun addString(str: String)
 
-    fun pop(): ZmqFrame
-    fun popBytes(): ByteArray
+    fun popBytes(): BinaryData
     fun popString(): String
 
     fun close()
 
-}*/
+}
