@@ -1,7 +1,6 @@
 package khala.internal.zmq
 
 /*
-
 ZmqLoop заморожен
 При создании запускает поток, который будет мониторить сокеты
 Поток создает свое состояние через loopStateProducer
@@ -19,17 +18,13 @@ ZmqLoop заморожен
      - луп затем получает это сообщение на забинженном и чекает arraydeque
 
  */
-internal expect class ZmqLoop<S>(context: ZmqContext, loopStateProducer: () -> S) {
-
-    fun addUnsafe(
-        address: String,
-        socket: ZmqSocket,
-        onNewMessage: (ZmqMsg, S) -> Unit
-    )
-
-    fun removeUnsafe(address: String)
-
-    fun getOrCreateUnsafe(address: String): ZmqSocket
+internal expect class ZmqLoop<S>(
+    context: ZmqContext,
+    userStateProducer: () -> S,
+    forwardListener: LoopState<S>.(String, ZmqMsg) -> Unit,
+    backwardListener: LoopState<S>.(ZmqMsg) -> Unit,
+    backwardRouterBindAddress: String?
+) {
 
     fun invokeSafe(
         block: (S) -> Unit

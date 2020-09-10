@@ -1,6 +1,5 @@
 package khala.internal.zmq
 
-
 internal expect class ZmqContext() {
 
     fun createAndConnectDealer(address: String): ZmqSocket
