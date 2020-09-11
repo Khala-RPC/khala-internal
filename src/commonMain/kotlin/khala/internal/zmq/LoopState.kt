@@ -7,7 +7,8 @@ internal class LoopState<S>(
     val forwardListener: LoopState<S>.(String, ZmqMsg) -> Unit,
     val backwardSocket: ZmqSocket?,
     val backwardListener: LoopState<S>.(ZmqMsg) -> Unit,
-    val userState: S
+    val userState: S,
+    var isStopped: Boolean = false
 )
 
 internal fun <S> LoopState<S>.sendForward(address: String, msg: ZmqMsg) {

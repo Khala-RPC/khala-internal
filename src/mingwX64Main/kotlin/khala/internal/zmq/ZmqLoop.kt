@@ -40,14 +40,14 @@ internal actual class ZmqLoop<S> actual constructor(
                     this, context, userStateProducer,
                     forwardListener, backwardListener,
                     backwardRouterBindAddress
-                )
+                ).freeze()
             },
             job = ::loopJob
         )
     }
 
 
-    actual fun invokeSafe(block: (S) -> Unit) {
+    actual fun invokeSafe(block: (LoopState<S>) -> Unit) {
         isolatedQueue.access {
             it.queue.addLast(InvokeQuery(block))
             ZmqMsg().send(it.pingSocket)
