@@ -23,6 +23,12 @@ internal actual class ZmqLoop<S> actual constructor(
             isStopped = false
     )
 
+    init {
+        backwardSocket?.apply {
+            socket.on("message", varargWrapper { args -> loopState.backwardListener(ZmqMsg(args)) })
+        }
+    }
+
 
     actual fun invokeSafe(block: LoopState<S>.() -> Unit) {
         block(loopState)

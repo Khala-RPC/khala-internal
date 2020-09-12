@@ -1,6 +1,6 @@
 package khala.internal.zmq
 
-private val varargWrapper = js("function(f) { return function() { return f(arguments); }; }")
+internal val varargWrapper = js("function(f) { return function() { return f(arguments); }; }")
 
 internal actual fun <S> LoopState<S>.sendForward(address: String, msg: ZmqMsg) {
     val socket = forwardSockets[address] ?: run {

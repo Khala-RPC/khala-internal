@@ -25,7 +25,8 @@ internal actual class ZmqMsg actual constructor() {
 
     actual fun send(socket: ZmqSocket) {
         val byteBlocks = frames.toTypedArray()
-        socket.arraySender(byteBlocks)
+        //socket.arraySender(byteBlocks)
+        socket.socket.send(byteBlocks)
         close()
     }
 

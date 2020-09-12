@@ -1,4 +1,7 @@
+@file:JvmName("ZmqMsgActualKt")
 package khala.internal.zmq
+
+import kotlin.jvm.JvmName
 
 expect class BinaryData
 

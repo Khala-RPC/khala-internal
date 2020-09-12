@@ -122,6 +122,7 @@ kotlin {
         val commonTest by getting {
             dependencies {
                 implementation("co.touchlab:stately-concurrency:1.1.1")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9")
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
             }
@@ -144,6 +145,7 @@ kotlin {
         val jsTest by getting {
             dependencies {
                 implementation(kotlin("test-js"))
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.3.9")
             }
         }
         val nodeMain by getting {

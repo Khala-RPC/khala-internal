@@ -9,6 +9,9 @@ internal fun twoDealers(protocol: String): Pair<ZmqSocket, ZmqSocket> {
     return Pair(sock1, sock2)
 }
 
-internal fun forAllProtocols(block: (protocol: String) -> Unit) {
-    supportedProtocols.forEach(block)
+internal inline fun forAllProtocols(port: Int, block: (bindAddress: String, connectAddress: String) -> Unit) {
+    supportedProtocols.forEach {
+        if (it == "inproc") block("inproc://$port", "inproc://$port")
+        else block("$it://*:$port", "$it://localhost:$port")
+    }
 }

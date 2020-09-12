@@ -8,10 +8,6 @@ class NodeZmqFrameTest {
     fun testBufferTCP() {
         val (sock1, sock2) = twoDealers("tcp")
         sock1.socket.on("message") { buffer ->
-            console.log(buffer)
-            val b = buffer as Buffer
-            console.log(b)
-            console.log(Buffer::class)
             sock1.close()
             sock2.close()
         }
@@ -23,10 +19,6 @@ class NodeZmqFrameTest {
     fun testBufferWS() {
         val (sock1, sock2) = twoDealers("ws")
         sock1.socket.on("message") { buffer ->
-            console.log(buffer)
-            val b = buffer as Buffer
-            console.log(b)
-            console.log(Buffer::class)
             sock1.close()
             sock2.close()
         }

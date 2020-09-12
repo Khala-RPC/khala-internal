@@ -1,3 +1,4 @@
+@file:JvmName("LoopStateActualKt")
 package khala.internal.zmq
 
 import org.zeromq.ZPoller
