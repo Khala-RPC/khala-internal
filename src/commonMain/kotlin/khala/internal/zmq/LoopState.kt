@@ -13,3 +13,10 @@ internal class LoopState<S>(
 
 internal expect fun <S> LoopState<S>.sendForward(address: String, msg: ZmqMsg)
 internal expect fun <S> LoopState<S>.remove(address: String)
+
+internal fun <S> LoopState<S>.sendForward(address: String, block: MsgBuilder.() -> Unit) {
+    val msg = ZmqMsg()
+    val builder = MsgBuilder(msg)
+    builder.block()
+    sendForward(address, msg)
+}

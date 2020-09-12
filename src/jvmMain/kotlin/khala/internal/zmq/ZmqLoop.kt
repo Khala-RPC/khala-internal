@@ -43,7 +43,7 @@ internal actual class ZmqLoop<S> actual constructor(
     }
 
 
-    actual fun invokeSafe(block: (LoopState<S>) -> Unit) {
+    actual fun invokeSafe(block: LoopState<S>.() -> Unit) {
         isolatedQueue.access {
             it.queue.addLast(InvokeQuery(block))
             ZmqMsg().send(it.pingSocket)

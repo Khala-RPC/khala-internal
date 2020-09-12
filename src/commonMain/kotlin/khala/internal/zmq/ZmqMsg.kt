@@ -15,3 +15,22 @@ internal expect class ZmqMsg() {
     fun close()
 
 }
+
+internal class MsgBuilder(val msg: ZmqMsg) {
+
+    operator fun BinaryData.unaryPlus() {
+        msg.addBytes(this)
+    }
+
+    operator fun String.unaryPlus() {
+        msg.addString(this)
+    }
+
+}
+
+internal fun sendMsg(socket: ZmqSocket, block: MsgBuilder.() -> Unit) {
+    val msg = ZmqMsg()
+    val builder = MsgBuilder(msg)
+    builder.block()
+    msg.send(socket)
+}

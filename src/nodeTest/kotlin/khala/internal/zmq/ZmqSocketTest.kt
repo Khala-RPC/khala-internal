@@ -4,32 +4,25 @@ package khala.internal.zmq
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-internal fun twoSockets(protocol: String): Pair<ZmqSocket, ZmqSocket> {
-    val ctx = ZmqContext()
-    val sock1 = ctx.createAndBindDealer("$protocol://*:12345")
-    val sock2 = ctx.createAndConnectDealer("$protocol://localhost:12345")
-    return Pair(sock1, sock2)
-}
-
-class ZmqSocketTest {
+class NodeZmqSocketTest {
 
     @Test
     fun testBasicBindConnectTCP() {
-        val (sock1, sock2) = twoSockets("tcp")
+        val (sock1, sock2) = twoDealers("tcp")
         sock2.close()
         sock1.close()
     }
 
     @Test
     fun testBasicBindConnectWS() {
-        val (sock1, sock2) = twoSockets("ws")
+        val (sock1, sock2) = twoDealers("ws")
         sock2.close()
         sock1.close()
     }
 
     @Test
     fun testBasicMessagingTCP() {
-        val (sock1, sock2) = twoSockets("tcp")
+        val (sock1, sock2) = twoDealers("tcp")
         sock1.socket.on("message") { msg ->
             assertEquals("12345", msg.toString())
             sock1.close()
@@ -40,7 +33,7 @@ class ZmqSocketTest {
 
     @Test
     fun testBasicMessagingWS() {
-        val (sock1, sock2) = twoSockets("ws")
+        val (sock1, sock2) = twoDealers("ws")
         sock1.socket.on("message") { msg ->
             assertEquals("12345", msg.toString())
             sock1.close()
@@ -51,7 +44,7 @@ class ZmqSocketTest {
 
     @Test
     fun testMultiMessagingTCP() {
-        val (sock1, sock2) = twoSockets("tcp")
+        val (sock1, sock2) = twoDealers("tcp")
         sock1.socket.on("message") { msgpart1, msgpart2 ->
             assertEquals("1234", msgpart1.toString())
             assertEquals("5678", msgpart2.toString())
@@ -63,7 +56,7 @@ class ZmqSocketTest {
 
     @Test
     fun testMultiMessagingWS() {
-        val (sock1, sock2) = twoSockets("ws")
+        val (sock1, sock2) = twoDealers("ws")
         sock1.socket.on("message") { msgpart1, msgpart2 ->
             assertEquals("1234", msgpart1.toString())
             assertEquals("5678", msgpart2.toString())

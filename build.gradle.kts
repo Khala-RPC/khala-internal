@@ -121,6 +121,7 @@ kotlin {
         }
         val commonTest by getting {
             dependencies {
+                implementation("co.touchlab:stately-concurrency:1.1.1")
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
             }

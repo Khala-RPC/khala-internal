@@ -1,13 +1,12 @@
 package khala.internal.zmq
 
 import kotlin.test.Test
-import kotlin.test.assertEquals
 
-class ZmqFrameTest {
+class NodeZmqFrameTest {
 
     @Test
     fun testBufferTCP() {
-        val (sock1, sock2) = twoSockets("tcp")
+        val (sock1, sock2) = twoDealers("tcp")
         sock1.socket.on("message") { buffer ->
             console.log(buffer)
             val b = buffer as Buffer
@@ -22,7 +21,7 @@ class ZmqFrameTest {
 
     @Test
     fun testBufferWS() {
-        val (sock1, sock2) = twoSockets("ws")
+        val (sock1, sock2) = twoDealers("ws")
         sock1.socket.on("message") { buffer ->
             console.log(buffer)
             val b = buffer as Buffer

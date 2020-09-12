@@ -9,7 +9,7 @@ internal expect class ZmqLoop<S>(
 ) {
 
     fun invokeSafe(
-        block: (LoopState<S>) -> Unit
+        block: LoopState<S>.() -> Unit
     )
 
     fun stopSafe()
