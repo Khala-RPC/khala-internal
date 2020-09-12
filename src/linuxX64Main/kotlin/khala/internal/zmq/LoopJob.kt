@@ -45,7 +45,7 @@ internal fun <S> loopJob(initialState: JobInitialState<S>) {
                 val rc = zmq_poll(pollItems, allSocketsList.size, 100)
                 // TODO return code check
                 for (i in allSocketsList.indices) {
-                    if (pollItems[i].revents == ZMQ_POLLIN.convert<Short>()) {
+                    if (pollItems[i].revents == ZMQ_POLLIN.convert()) {
                         val msg = ZmqMsg.recv(allSocketsList[i])!! //TODO handle ZMQ error
                         when {
                             i == 0 ->

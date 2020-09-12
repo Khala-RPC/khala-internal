@@ -11,15 +11,5 @@ internal class LoopState<S>(
     var isStopped: Boolean = false
 )
 
-internal fun <S> LoopState<S>.sendForward(address: String, msg: ZmqMsg) {
-    val socket = forwardSockets[address] ?: run {
-        val new = context.createAndConnectDealer(address)
-        forwardSockets[address] = new
-        new
-    }
-    msg.send(socket)
-}
-
-internal fun <S> LoopState<S>.remove(address: String) {
-    forwardSockets.remove(address)?.close()
-}
+internal expect fun <S> LoopState<S>.sendForward(address: String, msg: ZmqMsg)
+internal expect fun <S> LoopState<S>.remove(address: String)
