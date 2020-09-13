@@ -41,6 +41,9 @@ repositories {
 
 val mingwPath = File(System.getenv("MINGW64_DIR") ?: "C:/msys64/mingw64")
 
+tasks.withType<Test> {
+    useJUnitPlatform()
+}
 
 kotlin {
     jvm {
@@ -95,6 +98,9 @@ kotlin {
             packageName("khala.internal.cinterop.czmq")
         }
         binaries {
+            executable {
+                entryPoint = "khala.internal.main"
+            }
             staticLib {
                 baseName = "khala-internal-static"
             }
@@ -135,6 +141,9 @@ kotlin {
         val jvmTest by getting {
             dependencies {
                 implementation(kotlin("test-junit5"))
+                implementation("org.junit.jupiter:junit-jupiter-engine:5.5.2")
+                implementation("org.junit.jupiter:junit-jupiter-api:5.5.2")
+                implementation("org.junit.jupiter:junit-jupiter-params:5.5.2")
             }
         }
         val jsMain by getting {

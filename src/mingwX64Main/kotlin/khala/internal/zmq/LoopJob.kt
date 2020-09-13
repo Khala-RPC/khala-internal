@@ -3,7 +3,10 @@ package khala.internal.zmq
 import khala.internal.cinterop.zmq.ZMQ_POLLIN
 import khala.internal.cinterop.zmq.zmq_poll
 import khala.internal.cinterop.zmq.zmq_pollitem_t
-import kotlinx.cinterop.*
+import kotlinx.cinterop.allocArray
+import kotlinx.cinterop.convert
+import kotlinx.cinterop.get
+import kotlinx.cinterop.memScoped
 
 internal class JobInitialState<S>(
     val loop: ZmqLoop<S>,
@@ -15,6 +18,9 @@ internal class JobInitialState<S>(
 )
 
 internal fun <S> loopJob(initialState: JobInitialState<S>) {
+    val pongSocket = initialState.context.createAndConnectDealer(
+        "inproc://LOOP_WORKER_${initialState.loop.loopId}"
+    )
     val backwardSocket = initialState.backwardRouterBindAddress?.let {
         initialState.context.createAndBindRouter(it)
     }
@@ -27,22 +33,20 @@ internal fun <S> loopJob(initialState: JobInitialState<S>) {
         backwardListener = initialState.backwardListener,
         userState = initialState.userStateProducer()
     )
-    val pongSocket = initialState.context.createAndConnectDealer(
-        "inproc://LOOP_WORKER_${initialState.loop.loopId}"
-    )
     with(loopState) {
         while (!isStopped) {
             val forwardSocketsList = forwardSockets.toList()
             val allSocketsList = arrayListOf(pongSocket)
             if (backwardSocket != null) allSocketsList += backwardSocket
             allSocketsList += forwardSocketsList.map { it.second }
+            //TODO use zloop because poller can read only 1 msg
             memScoped {
                 val pollItems = allocArray<zmq_pollitem_t>(allSocketsList.size)
                 for (i in allSocketsList.indices) {
                     pollItems[i].socket = allSocketsList[i].socket
-                    pollItems[i].events = ZMQ_POLLIN.convert()
+                    pollItems[i].events = khala.internal.cinterop.czmq.ZMQ_POLLIN.convert()
                 }
-                val rc = zmq_poll(pollItems, allSocketsList.size, 100)
+                val rc = zmq_poll(pollItems, allSocketsList.size, -1)
                 // TODO return code check
                 for (i in allSocketsList.indices) {
                     if (pollItems[i].revents == ZMQ_POLLIN.convert<Short>()) {

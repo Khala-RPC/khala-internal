@@ -26,8 +26,3 @@ internal actual fun checkForEvent(block: () -> Boolean, delay: Int, repeatCount:
         }
     }
 }
-
-class Testy {
-    @Test
-    fun lol() {}
-}

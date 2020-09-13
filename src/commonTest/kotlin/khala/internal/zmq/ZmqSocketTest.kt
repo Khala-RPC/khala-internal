@@ -10,8 +10,9 @@ internal fun twoDealers(protocol: String): Pair<ZmqSocket, ZmqSocket> {
 }
 
 internal inline fun forAllProtocols(port: Int, block: (bindAddress: String, connectAddress: String) -> Unit) {
-    supportedProtocols.forEach {
-        if (it == "inproc") block("inproc://$port", "inproc://$port")
-        else block("$it://*:$port", "$it://localhost:$port")
+    supportedProtocols.withIndex().forEach {
+        val newPort = port + it.index
+        if (it.value == "inproc") block("inproc://$newPort", "inproc://$newPort")
+        else block("${it.value}://*:$newPort", "${it.value}://localhost:$newPort")
     }
 }
