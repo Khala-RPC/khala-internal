@@ -98,9 +98,6 @@ kotlin {
             packageName("khala.internal.cinterop.czmq")
         }
         binaries {
-            executable {
-                entryPoint = "khala.internal.main"
-            }
             staticLib {
                 baseName = "khala-internal-static"
             }

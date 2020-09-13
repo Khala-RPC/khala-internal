@@ -3,6 +3,7 @@ package khala.internal.zmq
 import co.touchlab.stately.isolate.IsolateState
 import kotlinx.cinterop.pin
 import kotlinx.cinterop.staticCFunction
+import platform.posix.sleep
 import kotlin.native.concurrent.AtomicInt
 import kotlin.native.concurrent.TransferMode
 import kotlin.native.concurrent.Worker
@@ -12,24 +13,28 @@ private val loopCounter = AtomicInt(0)
 
 internal class QueueState<S>(val queue: ArrayDeque<LoopQuery<S>>, val pingSocket: ZmqSocket)
 
+internal fun <S> createIsolateState(ctx: ZmqContext, loopId: Int) = IsolateState {
+    QueueState(
+        ArrayDeque<LoopQuery<S>>(),
+        ctx.createAndBindDealer(
+            "inproc://LOOP_WORKER_$loopId"
+        )
+    )
+}
+
 internal actual class ZmqLoop<S> actual constructor(
-    context: ZmqContext,
-    userStateProducer: () -> S,
-    forwardListener: LoopState<S>.(String, ZmqMsg) -> Unit,
-    backwardListener: LoopState<S>.(ZmqMsg) -> Unit,
-    backwardRouterBindAddress: String?
+    val context: ZmqContext,
+    val userStateProducer: () -> S,
+    val forwardListener: LoopState<S>.(String, ZmqMsg) -> Unit,
+    val backwardListener: LoopState<S>.(ZmqMsg) -> Unit,
+    val backwardRouterBindAddress: String?
 )  {
 
     internal val loopId = loopCounter.addAndGet(1)
 
-    internal val isolatedQueue = IsolateState {
-        QueueState(
-            ArrayDeque<LoopQuery<S>>(),
-            context.createAndBindDealer("inproc://LOOP_WORKER_$loopId")
-        )
-    }
-
     private val loopWorker = Worker.start(name = "LOOP_WORKER_$loopId")
+
+    internal val isolatedQueue = createIsolateState<S>(context, loopId)
 
     init {
         isolatedQueue.access { } // wait until inproc socket binds
@@ -46,11 +51,12 @@ internal actual class ZmqLoop<S> actual constructor(
         )
     }
 
-
     actual fun invokeSafe(block: LoopState<S>.() -> Unit) {
         isolatedQueue.access {
             it.queue.addLast(InvokeQuery(block))
-            ZmqMsg().send(it.pingSocket)
+            val m = ZmqMsg()
+            m.addString("")
+            m.send(it.pingSocket)
         }
     }
 
