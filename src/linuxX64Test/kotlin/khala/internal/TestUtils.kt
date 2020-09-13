@@ -1,6 +1,7 @@
 package khala.internal
 
 import kotlinx.cinterop.convert
+import kotlinx.coroutines.runBlocking
 import platform.posix.sleep
 
 internal actual val supportedProtocols: List<String> = listOf("tcp", "inproc") // ipc uses UNIX domain sockets
