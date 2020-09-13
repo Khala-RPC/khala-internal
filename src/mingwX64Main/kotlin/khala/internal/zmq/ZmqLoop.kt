@@ -19,7 +19,6 @@ internal fun <S> createIsolateState(ctx: ZmqContext, loopId: Int) = IsolateState
         ctx.createAndBindDealer(
             "inproc://LOOP_WORKER_$loopId"
         )
-
     )
 }
 

@@ -32,39 +32,14 @@ internal fun <S> loopJob(initialState: JobInitialState<S>) {
             handlePongSocket(ZmqMsg.recv(pongSocket)!!) //TODO ZMQ error handling
             true
         }, ZMQ.Poller.POLLIN)
-        while (!isStopped) {
-            loop.poller.poll(100L)
-            /*
-            val forwardSocketsList = forwardSockets.toList()
-            val allSocketsList = arrayListOf(pongSocket)
-            if (backwardSocket != null) allSocketsList += backwardSocket
-            allSocketsList += forwardSocketsList.map { it.second }
-            */
-
-
-            /*
-            val pollItems = allocArray<zmq_pollitem_t>(allSocketsList.size)
-            for (i in allSocketsList.indices) {
-                pollItems[i].socket = allSocketsList[i].socket
-                pollItems[i].events = ZMQ_POLLIN.convert()
-            }
-            val rc = zmq_poll(pollItems, allSocketsList.size, -1)
-            // TODO return code check
-            for (i in allSocketsList.indices) {
-                if (pollItems[i].revents == ZMQ_POLLIN.convert()) {
-                    val msg = ZmqMsg.recv(allSocketsList[i])!! //TODO handle ZMQ error
-                    when {
-                        i == 0 ->
-                            handlePongSocket(msg)
-                        i == 1 && backwardSocket != null ->
-                            this@with.backwardListener(msg)
-                        backwardSocket != null ->
-                            this@with.forwardListener(forwardSocketsList[i - 2].first, msg)
-                        else ->
-                            this@with.forwardListener(forwardSocketsList[i - 1].first, msg)
-                    }
-                }
-            }*/
+        if (backwardSocket != null) {
+            loop.poller.register(backwardSocket.socket, { _, _ ->
+                backwardListener(ZmqMsg.recv(backwardSocket)!!) // TODO ZMQ error handling
+                true
+            }, ZMQ.Poller.POLLIN)
+        }
+        while (!isStopped) { // TODO use ZLoop instead of poller
+            loop.poller.poll(-1L)
         }
     }
 }
