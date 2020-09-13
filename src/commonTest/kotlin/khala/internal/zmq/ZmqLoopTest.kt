@@ -11,7 +11,7 @@ class ZmqLoopTest {
     @Test
     fun testOneLoopBasicMessaging() = runTest {
         forAllProtocols(port = 22800) { bindAddress, connectAddress ->
-            val lol = AtomicReference<String?>(null)
+            val answer = AtomicReference<String?>(null)
             val ctx = ZmqContext()
 
             val loop = ZmqLoop(
@@ -19,7 +19,7 @@ class ZmqLoopTest {
                 userStateProducer = {},
                 forwardListener = { address, msg ->
                     println("Received msg on dealer")
-                    lol.value = msg.popString()
+                    answer.value = msg.popString()
                 },
                 backwardListener = { msg ->
                     println("Received msg on router")
@@ -39,12 +39,53 @@ class ZmqLoopTest {
                     +"privet"
                 }
             }
-            waitForCondition(500) { lol.get() != null }
-            val receivedMsg = lol.get()
+            waitForCondition(500) { answer.get() != null }
+            val receivedMsg = answer.get()
             println("Deferred completed with $receivedMsg")
             loop.stopSafe()
             assertNotNull(receivedMsg)
             assertEquals("tevirp", receivedMsg)
+        }
+    }
+
+    @Test
+    fun testInterLoopBasicMessaging() = runTest {
+        forAllProtocols(port = 22801) { bindAddress, connectAddress ->
+            val answer = AtomicReference<String?>(null)
+            val ctx = ZmqContext()
+            val clientLoop = ZmqLoop(
+                context = ctx,
+                userStateProducer = {},
+                forwardListener = { address, msg ->
+                    answer.value = msg.popString()
+                },
+                backwardListener = {},
+                backwardRouterBindAddress = null
+            )
+            val serverLoop = ZmqLoop(
+                context = ctx,
+                userStateProducer = {},
+                forwardListener = { _, _ -> },
+                backwardListener = { msg ->
+                    val identity = msg.popBytes()
+                    val str = msg.popString()
+                    msg.addBytes(identity)
+                    msg.addString(str.take(2))
+                    msg.send(backwardSocket!!)
+                },
+                backwardRouterBindAddress = bindAddress
+            )
+            clientLoop.invokeSafe {
+                sendForward(connectAddress) {
+                    +"kuliti"
+                }
+            }
+            waitForCondition(500) { answer.value != null }
+            clientLoop.stopSafe()
+            serverLoop.stopSafe()
+            val receivedStr = answer.get()
+            assertNotNull(receivedStr)
+            assertEquals("ku", receivedStr)
         }
     }
 }
