@@ -1,17 +1,21 @@
 package khala.internal.zmq
 
 import khala.internal.cinterop.czmq.*
-import kotlinx.cinterop.COpaquePointer
-import kotlinx.cinterop.CPointer
-import kotlinx.cinterop.cValuesOf
-import kotlinx.cinterop.toKString
+import kotlinx.cinterop.*
 
-actual class BinaryData @ExperimentalUnsignedTypes constructor(
+actual class BinaryData constructor(
     val rawData: COpaquePointer,
-    val size: ULong
+    val size: Int
 )
 
 internal actual class ZmqMsg {
+
+    companion object {
+
+        fun recv(source: ZmqSocket): ZmqMsg? =
+            zmsg_recv(source.socket)?.let { ZmqMsg(it) }
+
+    }
 
     private val message: CPointer<zmsg_t>
 
@@ -23,24 +27,22 @@ internal actual class ZmqMsg {
         this.message = message
     }
 
-
     actual fun send(socket: ZmqSocket) {
         zmsg_send(cValuesOf(message), socket.socket)
     }
 
     actual fun addBytes(bytes: BinaryData) {
-        zmsg_addmem(message, bytes.rawData, bytes.size)
+        zmsg_addmem(message, bytes.rawData, bytes.size.convert())
     }
 
     actual fun addString(str: String) {
         zmsg_addstr(message, str)
     }
 
-    @ExperimentalUnsignedTypes
     actual fun popBytes(): BinaryData {
         val frame = zmsg_pop(message)
         val data = zframe_data(frame)!!
-        val size = zframe_size(frame)
+        val size = zframe_size(frame).convert<Int>()
         return BinaryData(data, size)
     }
 

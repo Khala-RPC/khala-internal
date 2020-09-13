@@ -3,11 +3,11 @@ package khala.internal.zmq
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class ZmqMsgTest {
+class NodeZmqMsgTest {
 
     @Test
     fun testMsgReceive() {
-        val (sock1, sock2) = twoSockets("tcp")
+        val (sock1, sock2) = twoDealers("tcp")
         sock1.socket.on("message") { t1, t2 ->
             assertEquals("1", t1.toString())
             assertEquals("2", t2.toString())

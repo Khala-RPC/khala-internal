@@ -7,18 +7,16 @@ internal class LoopState<S>(
     val forwardListener: LoopState<S>.(String, ZmqMsg) -> Unit,
     val backwardSocket: ZmqSocket?,
     val backwardListener: LoopState<S>.(ZmqMsg) -> Unit,
-    val userState: S
+    val userState: S,
+    var isStopped: Boolean = false
 )
 
-internal fun <S> LoopState<S>.sendForward(address: String, msg: ZmqMsg) {
-    val socket = forwardSockets[address] ?: run {
-        val new = context.createAndConnectDealer(address)
-        forwardSockets[address] = new
-        new
-    }
-    msg.send(socket)
-}
+internal expect fun <S> LoopState<S>.sendForward(address: String, msg: ZmqMsg)
+internal expect fun <S> LoopState<S>.remove(address: String)
 
-internal fun <S> LoopState<S>.remove(address: String) {
-    forwardSockets.remove(address)?.close()
+internal fun <S> LoopState<S>.sendForward(address: String, block: MsgBuilder.() -> Unit) {
+    val msg = ZmqMsg()
+    val builder = MsgBuilder(msg)
+    builder.block()
+    sendForward(address, msg)
 }

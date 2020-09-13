@@ -41,6 +41,9 @@ repositories {
 
 val mingwPath = File(System.getenv("MINGW64_DIR") ?: "C:/msys64/mingw64")
 
+tasks.withType<Test> {
+    useJUnitPlatform()
+}
 
 kotlin {
     jvm {
@@ -121,6 +124,8 @@ kotlin {
         }
         val commonTest by getting {
             dependencies {
+                implementation("co.touchlab:stately-concurrency:1.1.1")
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9")
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
             }
@@ -133,6 +138,9 @@ kotlin {
         val jvmTest by getting {
             dependencies {
                 implementation(kotlin("test-junit5"))
+                implementation("org.junit.jupiter:junit-jupiter-engine:5.5.2")
+                implementation("org.junit.jupiter:junit-jupiter-api:5.5.2")
+                implementation("org.junit.jupiter:junit-jupiter-params:5.5.2")
             }
         }
         val jsMain by getting {
@@ -143,6 +151,7 @@ kotlin {
         val jsTest by getting {
             dependencies {
                 implementation(kotlin("test-js"))
+                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.3.9")
             }
         }
         val nodeMain by getting {
