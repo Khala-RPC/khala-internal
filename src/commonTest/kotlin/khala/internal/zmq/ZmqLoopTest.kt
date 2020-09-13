@@ -57,7 +57,7 @@ class ZmqLoopTest {
                 context = ctx,
                 userStateProducer = {},
                 forwardListener = { address, msg ->
-                    answer.value = msg.popString()
+                    answer.value = msg.popString() + msg.popString() + msg.popString()
                 },
                 backwardListener = {},
                 backwardRouterBindAddress = null
@@ -68,16 +68,23 @@ class ZmqLoopTest {
                 forwardListener = { _, _ -> },
                 backwardListener = { msg ->
                     val identity = msg.popBytes()
-                    val str = msg.popString()
-                    msg.addBytes(identity)
-                    msg.addString(str.take(2))
-                    msg.send(backwardSocket!!)
+                    val strKu = msg.popString().take(2)
+                    val strAnd = "-"
+                    val strPriff = msg.popString().take(5)
+                    msg.close()
+                    sendMsg(backwardSocket!!) {
+                        +identity
+                        +strKu
+                        +strAnd
+                        +strPriff
+                    }
                 },
                 backwardRouterBindAddress = bindAddress
             )
             clientLoop.invokeSafe {
                 sendForward(connectAddress) {
                     +"kuliti"
+                    +"priffki"
                 }
             }
             waitForCondition(500) { answer.value != null }
@@ -85,7 +92,7 @@ class ZmqLoopTest {
             serverLoop.stopSafe()
             val receivedStr = answer.get()
             assertNotNull(receivedStr)
-            assertEquals("ku", receivedStr)
+            assertEquals("ku-priff", receivedStr)
         }
     }
 }
