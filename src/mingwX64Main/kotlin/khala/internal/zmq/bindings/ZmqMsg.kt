@@ -1,9 +1,6 @@
-package khala.internal.zmq
+package khala.internal.zmq.bindings
 
 import khala.internal.cinterop.czmq.*
-import khala.internal.zmq.bindings.BinaryData
-import khala.internal.zmq.bindings.ZmqMsg
-import khala.internal.zmq.bindings.ZmqSocket
 import kotlinx.cinterop.*
 
 actual class BinaryData constructor(
@@ -16,7 +13,7 @@ internal actual class ZmqMsg {
     companion object {
 
         fun recv(source: ZmqSocket): ZmqMsg? =
-            zmsg_recv(source.socket)?.let { khala.internal.zmq.bindings.ZmqMsg(it) }
+            zmsg_recv(source.socket)?.let { ZmqMsg(it) }
 
     }
 
@@ -26,7 +23,7 @@ internal actual class ZmqMsg {
         message = zmsg_new()!!
     }
 
-    internal constructor(message: CPointer<zmsg_t>) {
+    private constructor(message: CPointer<zmsg_t>) {
         this.message = message
     }
 
@@ -46,7 +43,7 @@ internal actual class ZmqMsg {
         val frame = zmsg_pop(message)
         val data = zframe_data(frame)!!
         val size = zframe_size(frame).convert<Int>()
-        return khala.internal.zmq.bindings.BinaryData(data, size)
+        return BinaryData(data, size)
     }
 
     actual fun popString(): String {

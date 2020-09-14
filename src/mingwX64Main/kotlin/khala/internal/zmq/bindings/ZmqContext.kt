@@ -1,15 +1,10 @@
 package khala.internal.zmq.bindings
 
 import khala.internal.cinterop.zmq.*
-import kotlin.native.concurrent.freeze
 
-internal actual class ZmqContext {
+internal actual object ZmqContext {
 
     private val context = zmq_ctx_new()
-
-    init {
-        freeze()
-    }
 
     actual fun createAndConnectDealer(address: String): ZmqSocket {
         val socket = ZmqSocket(zmq_socket(context, ZMQ_DEALER)!!)
@@ -29,7 +24,4 @@ internal actual class ZmqContext {
         return socket
     }
 
-    actual fun close() {
-        zmq_ctx_destroy(context)
-    }
 }
