@@ -1,5 +1,7 @@
 package khala.internal
 
+import khala.internal.zmq.bindings.ZmqContext
+import khala.internal.zmq.bindings.ZmqSocket
 import kotlinx.coroutines.delay
 
 /** Protocols that will be tested. Browser JS does not allow binding zmq sockets, to it will not be tested at all :( */
@@ -26,4 +28,10 @@ internal suspend inline fun waitForCondition(timeout: Int, condition: () -> Bool
         delay(10L)
         if (condition()) return
     }
+}
+
+internal fun twoDealers(protocol: String): Pair<ZmqSocket, ZmqSocket> {
+    val sock1 = ZmqContext.createAndBindDealer("$protocol://*:12345")
+    val sock2 = ZmqContext.createAndConnectDealer("$protocol://localhost:12345")
+    return Pair(sock1, sock2)
 }

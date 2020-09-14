@@ -1,9 +1,9 @@
 package khala.internal.zmq.bindings
 
-import khala.internal.zmq.jszmq
-import khala.internal.zmq.zmq
+internal val zmq = js("require('zeromq')")
+internal val jszmq = js("require('@prodatalab/jszmq')")
 
-internal actual class ZmqContext actual constructor() {
+internal actual object ZmqContext {
 
     actual fun createAndConnectDealer(address: String): ZmqSocket {
         val isWebSocket = address.startsWith("ws")
@@ -28,7 +28,5 @@ internal actual class ZmqContext actual constructor() {
         zmqSocket.bind(address)
         return zmqSocket
     }
-
-    actual fun close() { /* do nothing */ }
 
 }
