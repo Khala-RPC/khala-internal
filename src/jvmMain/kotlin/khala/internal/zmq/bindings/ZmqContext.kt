@@ -2,8 +2,11 @@ package khala.internal.zmq.bindings
 
 import org.zeromq.SocketType
 import org.zeromq.ZContext
+import java.util.concurrent.atomic.AtomicInteger
 
-internal actual class ZmqContext {
+internal actual object ZmqContext {
+
+    internal val loopCounter = AtomicInteger(0)
 
     internal val context = ZContext()
 
@@ -25,7 +28,4 @@ internal actual class ZmqContext {
         return socket
     }
 
-    actual fun close() {
-        context.close()
-    }
 }

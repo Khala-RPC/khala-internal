@@ -1,8 +1,6 @@
 @file:JvmName("ZmqMsgActualKt")
-package khala.internal.zmq
+package khala.internal.zmq.bindings
 
-import khala.internal.zmq.bindings.ZmqMsg
-import khala.internal.zmq.bindings.ZmqSocket
 import org.zeromq.ZMsg
 
 actual typealias BinaryData = ByteArray
@@ -12,7 +10,7 @@ internal actual class ZmqMsg {
     companion object {
 
         fun recv(source: ZmqSocket): ZmqMsg? =
-            khala.internal.zmq.bindings.ZmqMsg(ZMsg.recvMsg(source.socket))
+            ZmqMsg(ZMsg.recvMsg(source.socket))
 
     }
 

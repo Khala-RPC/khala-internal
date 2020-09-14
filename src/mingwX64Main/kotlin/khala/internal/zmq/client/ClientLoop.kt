@@ -27,11 +27,7 @@ internal actual class ClientLoop<L, S> actual constructor(
     forwardListener: ForwardListener<L, S>
 )  {
 
-    private companion object {
-        private val loopCounter = AtomicInt(0)
-    }
-
-    private val loopId = loopCounter.addAndGet(1)
+    private val loopId = ZmqContext.loopCounter.addAndGet(1)
 
     private val loopWorker = Worker.start(name = "LOOP_WORKER_$loopId")
 

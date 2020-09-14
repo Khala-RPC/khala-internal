@@ -1,8 +1,11 @@
 package khala.internal.zmq.bindings
 
 import khala.internal.cinterop.zmq.*
+import kotlin.native.concurrent.AtomicInt
 
 internal actual object ZmqContext {
+
+    internal val loopCounter = AtomicInt(0)
 
     private val context = zmq_ctx_new()
 

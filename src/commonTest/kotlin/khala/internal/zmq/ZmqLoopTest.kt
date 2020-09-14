@@ -47,7 +47,7 @@ class ZmqLoopTest {
                     +"priffki"
                 }
             }
-            waitForCondition(500) { answer.value != null }
+            waitForCondition(timeout = 500) { answer.value != null }
             clientLoop.stopSafe()
             serverLoop.stopSafe()
             val receivedStr = answer.get()

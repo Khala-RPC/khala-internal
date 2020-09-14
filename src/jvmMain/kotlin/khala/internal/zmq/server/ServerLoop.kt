@@ -1,13 +1,12 @@
+@file:JvmName("ServerLoopActualKt")
 package khala.internal.zmq.server
 
+import java.util.concurrent.atomic.AtomicInteger
 import co.touchlab.stately.isolate.IsolateState
 import khala.internal.zmq.bindings.ZmqContext
 import khala.internal.zmq.bindings.ZmqMsg
 import khala.internal.zmq.bindings.ZmqSocket
-import kotlin.native.concurrent.AtomicInt
-import kotlin.native.concurrent.TransferMode
-import kotlin.native.concurrent.Worker
-import kotlin.native.concurrent.freeze
+import kotlin.concurrent.thread
 
 
 internal class ServerQueueState<L>(val queue: ArrayDeque<ServerLoopQuery<L>>, val pingSocket: ZmqSocket)
@@ -29,23 +28,20 @@ internal actual class ServerLoop<L> actual constructor(
 
     private val loopId = ZmqContext.loopCounter.addAndGet(1)
 
-    private val loopWorker = Worker.start(name = "LOOP_WORKER_$loopId")
+    private val loopWorker: Thread
 
     private val isolatedQueue = createIsolateState<L>(loopId)
 
     init {
         isolatedQueue.access { } // wait until inproc socket binds
-        loopWorker.execute(
-            mode = TransferMode.SAFE,
-            producer = {
-                ServerLoopJobInitialState(
-                    isolatedQueue, loopId,
-                    loopStateProducer, backwardListener,
-                    backwardRouterBindAddress
-                ).freeze()
-            },
-            job = ::serverLoopJob
+        val initialState = ServerLoopJobInitialState(
+            isolatedQueue, loopId,
+            loopStateProducer, backwardListener,
+            backwardRouterBindAddress
         )
+        loopWorker = thread(name = "LOOP_WORKER_$loopId") {
+            serverLoopJob(initialState)
+        }
     }
 
     actual fun invokeSafe(block: ServerLoopScope<L>.(L) -> Unit) {
