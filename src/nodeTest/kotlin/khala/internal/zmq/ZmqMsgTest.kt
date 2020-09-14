@@ -1,5 +1,6 @@
 package khala.internal.zmq
 
+import khala.internal.twoDealers
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

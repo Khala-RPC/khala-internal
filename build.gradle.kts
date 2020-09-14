@@ -59,13 +59,11 @@ kotlin {
                     webpackConfig.cssSupport.enabled = true
                 }
             }
-            binaries.executable()
         }
     }
     js("node") {
         attributes.attribute(Attribute.of(String::class.java), "node")
         nodejs {
-            binaries.executable()
         }
     }
     val hostOs = System.getProperty("os.name")
