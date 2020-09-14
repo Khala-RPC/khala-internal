@@ -45,7 +45,7 @@ jobs:
         run: >-
           ./gradlew linkDebugTestMingwX64;
           Copy-Item src/mingwX64Main/resources/bin/* build/bin/mingwX64/debugTest/;
-          ./gradlew build
+          ./gradlew mingwX64Test linkReleaseSharedMingwX64 linkReleaseStaticMingwX64
 
       - name: Publish dev package
         run: ./gradlew publish -Pbintray_user=${{ secrets.BINTRAY_USER }} -Pbintray_api_key=${{ secrets.BINTRAY_API_KEY }}
