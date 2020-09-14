@@ -1,4 +1,4 @@
-package khala.internal.zmq.client
+package khala.internal.zmq.server
 
 import co.touchlab.stately.isolate.IsolateState
 import khala.internal.zmq.bindings.ZmqContext
@@ -10,21 +10,21 @@ import kotlin.native.concurrent.Worker
 import kotlin.native.concurrent.freeze
 
 
-internal class ClientQueueState<L, S>(val queue: ArrayDeque<ClientLoopQuery<L, S>>, val pingSocket: ZmqSocket)
+internal class ServerQueueState<L>(val queue: ArrayDeque<ServerLoopQuery<L>>, val pingSocket: ZmqSocket)
 
-internal fun <L, S> createIsolateState(loopId: Int) = IsolateState {
-    ClientQueueState(
-        ArrayDeque<ClientLoopQuery<L, S>>(),
+internal fun <L> createIsolateState(loopId: Int) = IsolateState {
+    ServerQueueState(
+        ArrayDeque<ServerLoopQuery<L>>(),
         ZmqContext.createAndBindDealer(
             "inproc://LOOP_WORKER_$loopId"
         )
     )
 }
 
-internal actual class ClientLoop<L, S> actual constructor(
+internal actual class ServerLoop<L> actual constructor(
     loopStateProducer: () -> L,
-    socketStateProducer: (L) -> S,
-    forwardListener: ForwardListener<L, S>
+    backwardRouterBindAddress: String,
+    backwardListener: BackwardListener<L>
 )  {
 
     private companion object {
@@ -35,26 +35,26 @@ internal actual class ClientLoop<L, S> actual constructor(
 
     private val loopWorker = Worker.start(name = "LOOP_WORKER_$loopId")
 
-    private val isolatedQueue: IsolateState<ClientQueueState<L, S>> = createIsolateState(loopId)
+    private val isolatedQueue = createIsolateState<L>(loopId)
 
     init {
         isolatedQueue.access { } // wait until inproc socket binds
         loopWorker.execute(
             mode = TransferMode.SAFE,
             producer = {
-                ClientLoopJobInitialState(
+                ServerLoopJobInitialState(
                     isolatedQueue, loopId,
-                    loopStateProducer, socketStateProducer,
-                    forwardListener
+                    loopStateProducer, backwardListener,
+                    backwardRouterBindAddress
                 ).freeze()
             },
-            job = ::clientLoopJob
+            job = ::serverLoopJob
         )
     }
 
-    actual fun invokeSafe(block: ClientLoopScope<L, S>.(L) -> Unit) {
+    actual fun invokeSafe(block: ServerLoopScope<L>.(L) -> Unit) {
         isolatedQueue.access {
-            it.queue.addLast(ClientLoopQuery.InvokeQuery(block))
+            it.queue.addLast(ServerLoopQuery.InvokeQuery(block))
             val m = ZmqMsg()
             m.addString("")
             m.send(it.pingSocket)
@@ -63,7 +63,7 @@ internal actual class ClientLoop<L, S> actual constructor(
 
     actual fun stopSafe() {
         isolatedQueue.access {
-            it.queue.addLast(ClientLoopQuery.StopQuery())
+            it.queue.addLast(ServerLoopQuery.StopQuery())
             ZmqMsg().send(it.pingSocket)
         }
         isolatedQueue.dispose()

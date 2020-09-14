@@ -1,4 +1,4 @@
-package khala.internal.zmq.client
+package khala.internal.zmq.server
 
 import co.touchlab.stately.isolate.IsolateState
 import khala.internal.cinterop.zmq.ZMQ_POLLIN
@@ -11,31 +11,29 @@ import kotlinx.cinterop.convert
 import kotlinx.cinterop.get
 import kotlinx.cinterop.memScoped
 
-internal class ClientLoopJobInitialState<L, S>(
-    val isolatedQueue: IsolateState<ClientQueueState<L, S>>,
+internal class ServerLoopJobInitialState<L>(
+    val isolatedQueue: IsolateState<ServerQueueState<L>>,
     val loopId: Int,
     val loopStateProducer: () -> L,
-    val socketStateProducer: (L) -> S,
-    val forwardListener: ForwardListener<L, S>
+    val backwardListener: BackwardListener<L>,
+    val backwardRouterBindAddress: String
 )
 
-internal fun <L, S> clientLoopJob(initialState: ClientLoopJobInitialState<L, S>) {
+internal fun <L> serverLoopJob(initialState: ServerLoopJobInitialState<L>) {
     val pongSocket = ZmqContext.createAndConnectDealer(
         "inproc://LOOP_WORKER_${initialState.loopId}"
     )
-    val loopScope = ClientLoopScope(
+    val backwardSocket = ZmqContext.createAndBindRouter(initialState.backwardRouterBindAddress)
+    val loopScope = ServerLoopScope(
         isolatedQueue = initialState.isolatedQueue,
-        forwardSockets = LinkedHashMap(),
-        forwardListener = initialState.forwardListener,
-        socketStateProducer = initialState.socketStateProducer,
+        backwardSocket = backwardSocket,
+        backwardListener = initialState.backwardListener,
         loopState = initialState.loopStateProducer(),
         isStopped = false
     )
     with(loopScope) {
         while (!isStopped) {
-            val forwardSocketsList = forwardSockets.toList()
-            val allSocketsList = arrayListOf(pongSocket)
-            allSocketsList += forwardSocketsList.map { it.second.socket }
+            val allSocketsList = arrayListOf(pongSocket, backwardSocket)
             //TODO use zloop because poller can read only 1 msg
             memScoped {
                 val pollItems = allocArray<zmq_pollitem_t>(allSocketsList.size)
@@ -49,13 +47,7 @@ internal fun <L, S> clientLoopJob(initialState: ClientLoopJobInitialState<L, S>)
                     if (pollItems[i].revents == ZMQ_POLLIN.convert<Short>()) {
                         val msg = ZmqMsg.recv(allSocketsList[i])!! //TODO handle ZMQ error
                         if (i == 0) handlePongSocket(msg)
-                        else this@with.forwardListener(
-                            loopState,
-                            forwardSocketsList[i - 1].second.state,
-                            forwardSocketsList[i - 1].first,
-                            forwardSocketsList[i - 1].second.socket,
-                            msg
-                        )
+                        else this@with.backwardListener(loopState, msg)
                     }
                 }
             }
@@ -63,11 +55,11 @@ internal fun <L, S> clientLoopJob(initialState: ClientLoopJobInitialState<L, S>)
     }
 }
 
-private fun <L, S> ClientLoopScope<L, S>.handlePongSocket(msg: ZmqMsg) {
+private fun <L> ServerLoopScope<L>.handlePongSocket(msg: ZmqMsg) {
     msg.close()
-    val query: ClientLoopQuery<L, S> = isolatedQueue.access { it.queue.removeFirst() }
+    val query: ServerLoopQuery<L> = isolatedQueue.access { it.queue.removeFirst() }
     when (query) {
-        is ClientLoopQuery.InvokeQuery<L, S> -> query.block(this, loopState)
-        is ClientLoopQuery.StopQuery<L, S> -> isStopped = true
+        is ServerLoopQuery.InvokeQuery<L> -> query.block(this, loopState)
+        is ServerLoopQuery.StopQuery<L> -> isStopped = true
     }
 }

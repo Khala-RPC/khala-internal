@@ -5,7 +5,7 @@ import khala.internal.zmq.bindings.ZmqContext
 import khala.internal.zmq.bindings.ZmqMsg
 
 internal actual class ClientLoopScope<L, S>(
-    val isolatedQueue: IsolateState<QueueState<L, S>>,
+    val isolatedQueue: IsolateState<ClientQueueState<L, S>>,
     val forwardSockets: MutableMap<String, SocketWithState<S>>,
     val forwardListener: ForwardListener<L, S>,
     val socketStateProducer: (L) -> S,
