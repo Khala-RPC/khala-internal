@@ -2,7 +2,6 @@ package khala.internal.json
 
 import khala.internal.cinterop.json.*
 import kotlinx.cinterop.*
-import platform.posix.size_t
 import kotlin.test.Test
 
 class JsonTest {
@@ -12,17 +11,17 @@ class JsonTest {
     @Test
     fun testJsonParse() {
         var jsonObj = json_tokener_parse("12345")
-        println("${json_object_get_type(jsonObj)} ${json_object_get_int(jsonObj).withClass()}")
+        println("${json_object_get_type(jsonObj).name} ${json_object_get_int(jsonObj).withClass()}")
         jsonObj = json_tokener_parse("12345.54321")
-        println("${json_object_get_type(jsonObj)} ${json_object_get_double(jsonObj).withClass()}")
+        println("${json_object_get_type(jsonObj).name} ${json_object_get_double(jsonObj).withClass()}")
         jsonObj = json_tokener_parse("\"privet\"")
-        println("${json_object_get_type(jsonObj)} ${json_object_get_string(jsonObj)!!.toKString().withClass()}")
+        println("${json_object_get_type(jsonObj).name} ${json_object_get_string(jsonObj)!!.toKString().withClass()}")
         jsonObj = json_tokener_parse("[1, 2, 3, 4, 5]")
-        println("${json_object_get_type(jsonObj)} ${json_object_get_array(jsonObj)!!.withClass()}")
+        println("${json_object_get_type(jsonObj).name} ${json_object_get_array(jsonObj)!!.withClass()}")
         jsonObj = json_tokener_parse("""{ "lol": "ku", "pri": 1234 }""")
-        println("${json_object_get_type(jsonObj)} ${json_object_get_object(jsonObj)!!.withClass()}")
+        println("${json_object_get_type(jsonObj).name} ${json_object_get_object(jsonObj)!!.withClass()}")
         jsonObj = json_tokener_parse("null")
-        println("${json_object_get_type(jsonObj)} ${json_object_get(jsonObj)?.withClass()}")
+        println("${json_object_get_type(jsonObj).name} ${json_object_get(jsonObj)?.withClass()}")
     }
 
     fun CPointer<array_list>.get(idx: Int): COpaquePointer? {
@@ -43,7 +42,8 @@ class JsonTest {
 
     @Test
     fun testJsonObjectParse() {
-        val jsonObject = json_object_get_object(json_tokener_parse("""{ "lol": "ku", "pri": 1234 }"""))!!
+        val obj: CPointer<json_object>? = json_tokener_parse("""{ "lol": "ku", "pri": 1234 }""")
+        val jsonObject = json_object_get_object(obj)!!
         val count = jsonObject.pointed.count
         val map = hashMapOf<Any?, Any?>()
         var cur = jsonObject.pointed.head
