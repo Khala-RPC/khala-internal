@@ -131,6 +131,7 @@ kotlin {
         val jvmMain by getting {
             dependencies {
                 implementation("org.zeromq:jeromq:0.5.2")
+                implementation("org.json:json:20200518")
             }
         }
         val jvmTest by getting {
