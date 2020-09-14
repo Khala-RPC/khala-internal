@@ -1,3 +1,4 @@
+@file:JvmName("ZmqMsgActualKt")
 package khala.internal.zmq
 
 import khala.internal.zmq.bindings.ZmqMsg

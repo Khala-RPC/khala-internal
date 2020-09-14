@@ -2,13 +2,16 @@ package khala.internal.zmq.server
 
 import khala.internal.zmq.bindings.ZmqMsg
 
+internal typealias BackwardListener<L> =
+        ServerLoopScope.(loopState: L, msg: ZmqMsg) -> Unit
+
 /**
  * Thread-safe ZMQ server.
  */
 internal expect class ServerLoop<L>(
     loopStateProducer: () -> L,
-    backwardListener: ServerLoopScope.(L, ZmqMsg) -> Unit,
-    backwardRouterBindAddress: String
+    backwardRouterBindAddress: String,
+    backwardListener: BackwardListener<L>
 ) {
 
     /**

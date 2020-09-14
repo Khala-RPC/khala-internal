@@ -1,10 +1,15 @@
-@file:JvmName("ZmqMsgActualKt")
 package khala.internal.zmq.bindings
 
-import kotlin.jvm.JvmName
-
+/**
+ * Binary block that is received and sent inside ZMQ messages.
+ * //TODO We need methods to convert this to ByteArray and back.
+ * This is NOT ByteArray because ByteArray is not really interoperable with some platform-specific code.
+ */
 expect class BinaryData
 
+/**
+ * Binding for ZMQ Multipart Message
+ */
 internal expect class ZmqMsg() {
 
     fun send(socket: ZmqSocket)

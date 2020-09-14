@@ -3,13 +3,16 @@ package khala.internal.zmq.client
 import khala.internal.zmq.bindings.ZmqMsg
 import khala.internal.zmq.bindings.ZmqSocket
 
+internal typealias ForwardListener<L, S> =
+        ClientLoopScope.(loopState: L, socketState: S, address: String, forwardSocket: ZmqSocket, msg: ZmqMsg) -> Unit
+
 /**
  * Thread-safe ZMQ client.
  */
 internal expect class ClientLoop<L, S>(
     loopStateProducer: () -> L,
     socketStateProducer: (L) -> S,
-    forwardListener: ClientLoopScope.(L, S, String, ZmqSocket, ZmqMsg) -> Unit
+    forwardListener: ForwardListener<L, S>
 ) {
 
     /**
