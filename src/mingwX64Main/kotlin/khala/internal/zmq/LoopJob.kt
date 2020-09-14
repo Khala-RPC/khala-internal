@@ -3,6 +3,9 @@ package khala.internal.zmq
 import khala.internal.cinterop.zmq.ZMQ_POLLIN
 import khala.internal.cinterop.zmq.zmq_poll
 import khala.internal.cinterop.zmq.zmq_pollitem_t
+import khala.internal.zmq.bindings.ZmqContext
+import khala.internal.zmq.server.LoopState
+import khala.internal.zmq.server.ZmqLoop
 import kotlinx.cinterop.allocArray
 import kotlinx.cinterop.convert
 import kotlinx.cinterop.get
@@ -12,8 +15,8 @@ internal class JobInitialState<S>(
     val loop: ZmqLoop<S>,
     val context: ZmqContext,
     val userStateProducer: () -> S,
-    val forwardListener: LoopState<S>.(String, ZmqMsg) -> Unit,
-    val backwardListener: LoopState<S>.(ZmqMsg) -> Unit,
+    val forwardListener: LoopState<S>.(String, khala.internal.zmq.bindings.ZmqMsg) -> Unit,
+    val backwardListener: LoopState<S>.(khala.internal.zmq.bindings.ZmqMsg) -> Unit,
     val backwardRouterBindAddress: String?
 )
 

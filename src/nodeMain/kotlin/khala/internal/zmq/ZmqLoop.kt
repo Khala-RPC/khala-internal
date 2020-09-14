@@ -1,11 +1,15 @@
 package khala.internal.zmq
 
+import khala.internal.zmq.bindings.ZmqContext
+import khala.internal.zmq.bindings.ZmqMsg
+import khala.internal.zmq.server.LoopState
+
 internal actual class ZmqLoop<S> actual constructor(
-        context: ZmqContext,
-        userStateProducer: () -> S,
-        forwardListener: LoopState<S>.(String, ZmqMsg) -> Unit,
-        backwardListener: LoopState<S>.(ZmqMsg) -> Unit,
-        backwardRouterBindAddress: String?
+    context: ZmqContext,
+    userStateProducer: () -> S,
+    forwardListener: LoopState<S>.(String, ZmqMsg) -> Unit,
+    backwardListener: LoopState<S>.(ZmqMsg) -> Unit,
+    backwardRouterBindAddress: String?
 ) {
 
     internal val backwardSocket = backwardRouterBindAddress?.let {
@@ -25,7 +29,11 @@ internal actual class ZmqLoop<S> actual constructor(
 
     init {
         backwardSocket?.apply {
-            socket.on("message", varargWrapper { args -> loopState.backwardListener(ZmqMsg(args)) })
+            socket.on("message", varargWrapper { args -> loopState.backwardListener(
+                khala.internal.zmq.bindings.ZmqMsg(
+                    args
+                )
+            ) })
         }
     }
 

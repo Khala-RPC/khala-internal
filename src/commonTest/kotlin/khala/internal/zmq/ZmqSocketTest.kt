@@ -1,6 +1,8 @@
 package khala.internal.zmq
 
 import khala.internal.supportedProtocols
+import khala.internal.zmq.bindings.ZmqContext
+import khala.internal.zmq.bindings.ZmqSocket
 
 internal fun twoDealers(protocol: String): Pair<ZmqSocket, ZmqSocket> {
     val ctx = ZmqContext()

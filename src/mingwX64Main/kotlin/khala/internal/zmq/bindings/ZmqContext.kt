@@ -1,32 +1,35 @@
-package khala.internal.zmq
+package khala.internal.zmq.bindings
 
-import org.zeromq.SocketType
-import org.zeromq.ZContext
-
+import khala.internal.cinterop.zmq.*
+import kotlin.native.concurrent.freeze
 
 internal actual class ZmqContext {
 
-    internal val context = ZContext()
+    private val context = zmq_ctx_new()
+
+    init {
+        freeze()
+    }
 
     actual fun createAndConnectDealer(address: String): ZmqSocket {
-        val socket = ZmqSocket(context.createSocket(SocketType.DEALER))
+        val socket = ZmqSocket(zmq_socket(context, ZMQ_DEALER)!!)
         socket.connect(address)
         return socket
     }
 
     actual fun createAndBindDealer(address: String): ZmqSocket {
-        val socket = ZmqSocket(context.createSocket(SocketType.DEALER))
+        val socket = ZmqSocket(zmq_socket(context, ZMQ_DEALER)!!)
         socket.bind(address)
         return socket
     }
 
     actual fun createAndBindRouter(address: String): ZmqSocket {
-        val socket = ZmqSocket(context.createSocket(SocketType.ROUTER))
+        val socket = ZmqSocket(zmq_socket(context, ZMQ_ROUTER)!!)
         socket.bind(address)
         return socket
     }
 
     actual fun close() {
-        context.close()
+        zmq_ctx_destroy(context)
     }
 }

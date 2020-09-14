@@ -1,9 +1,10 @@
 @file:JvmName("LoopStateActualKt")
 package khala.internal.zmq
 
+import khala.internal.zmq.server.LoopState
 import org.zeromq.ZPoller
 
-internal actual fun <S> LoopState<S>.sendForward(address: String, msg: ZmqMsg) {
+internal actual fun <S> LoopState<S>.sendForward(address: String, msg: khala.internal.zmq.bindings.ZmqMsg) {
     val socket = forwardSockets[address] ?: run {
         val newSocket = context.createAndConnectDealer(address)
         forwardSockets[address] = newSocket

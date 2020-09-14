@@ -1,14 +1,17 @@
 package khala.internal.zmq
 
+import khala.internal.zmq.bindings.ZmqContext
+import khala.internal.zmq.server.LoopState
+import khala.internal.zmq.server.ZmqLoop
 import org.zeromq.ZMQ
 
 internal class JobInitialState<S>(
-        val loop: ZmqLoop<S>,
-        val context: ZmqContext,
-        val userStateProducer: () -> S,
-        val forwardListener: LoopState<S>.(String, ZmqMsg) -> Unit,
-        val backwardListener: LoopState<S>.(ZmqMsg) -> Unit,
-        val backwardRouterBindAddress: String?
+    val loop: ZmqLoop<S>,
+    val context: ZmqContext,
+    val userStateProducer: () -> S,
+    val forwardListener: LoopState<S>.(String, khala.internal.zmq.bindings.ZmqMsg) -> Unit,
+    val backwardListener: LoopState<S>.(khala.internal.zmq.bindings.ZmqMsg) -> Unit,
+    val backwardRouterBindAddress: String?
 )
 
 internal fun <S> loopJob(initialState: JobInitialState<S>) {

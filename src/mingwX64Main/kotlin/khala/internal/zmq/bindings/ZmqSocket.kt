@@ -1,4 +1,4 @@
-package khala.internal.zmq
+package khala.internal.zmq.bindings
 
 import khala.internal.cinterop.zmq.zmq_bind
 import khala.internal.cinterop.zmq.zmq_close

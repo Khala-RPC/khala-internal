@@ -1,4 +1,4 @@
-package khala.internal.zmq
+package khala.internal.zmq.bindings
 
 internal actual class ZmqSocket(internal val socket: dynamic) {
 

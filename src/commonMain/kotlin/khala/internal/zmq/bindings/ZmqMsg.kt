@@ -1,5 +1,5 @@
 @file:JvmName("ZmqMsgActualKt")
-package khala.internal.zmq
+package khala.internal.zmq.bindings
 
 import kotlin.jvm.JvmName
 
@@ -31,7 +31,14 @@ internal class MsgBuilder(val msg: ZmqMsg) {
 
 }
 
-internal fun sendMsg(socket: ZmqSocket, block: MsgBuilder.() -> Unit) {
+internal inline fun buildMsg(block: MsgBuilder.() -> Unit): ZmqMsg {
+    val msg = ZmqMsg()
+    val builder = MsgBuilder(msg)
+    builder.block()
+    return msg
+}
+
+internal inline fun sendMsg(socket: ZmqSocket, block: MsgBuilder.() -> Unit) {
     val msg = ZmqMsg()
     val builder = MsgBuilder(msg)
     builder.block()

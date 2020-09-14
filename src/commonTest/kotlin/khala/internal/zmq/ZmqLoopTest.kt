@@ -4,6 +4,9 @@ import co.touchlab.stately.concurrency.AtomicReference
 import co.touchlab.stately.concurrency.value
 import khala.internal.runTest
 import khala.internal.waitForCondition
+import khala.internal.zmq.bindings.sendMsg
+import khala.internal.zmq.server.ZmqLoop
+import khala.internal.zmq.server.sendForward
 import kotlin.test.*
 
 class ZmqLoopTest {

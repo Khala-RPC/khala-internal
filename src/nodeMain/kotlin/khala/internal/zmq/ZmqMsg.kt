@@ -1,5 +1,7 @@
 package khala.internal.zmq
 
+import khala.internal.zmq.bindings.ZmqSocket
+
 external class Buffer {
 
     companion object {

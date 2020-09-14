@@ -1,5 +1,7 @@
 package khala.internal.zmq
 
+import khala.internal.zmq.bindings.ZmqMsg
+import khala.internal.zmq.bindings.ZmqSocket
 import org.zeromq.ZMsg
 
 actual typealias BinaryData = ByteArray
@@ -9,7 +11,7 @@ internal actual class ZmqMsg {
     companion object {
 
         fun recv(source: ZmqSocket): ZmqMsg? =
-                ZmqMsg(ZMsg.recvMsg(source.socket))
+            khala.internal.zmq.bindings.ZmqMsg(ZMsg.recvMsg(source.socket))
 
     }
 

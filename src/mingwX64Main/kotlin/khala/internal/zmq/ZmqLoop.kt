@@ -1,9 +1,10 @@
 package khala.internal.zmq
 
 import co.touchlab.stately.isolate.IsolateState
-import kotlinx.cinterop.pin
-import kotlinx.cinterop.staticCFunction
-import platform.posix.sleep
+import khala.internal.zmq.bindings.ZmqContext
+import khala.internal.zmq.bindings.ZmqMsg
+import khala.internal.zmq.bindings.ZmqSocket
+import khala.internal.zmq.server.LoopState
 import kotlin.native.concurrent.AtomicInt
 import kotlin.native.concurrent.TransferMode
 import kotlin.native.concurrent.Worker
@@ -65,6 +66,7 @@ internal actual class ZmqLoop<S> actual constructor(
             it.queue.addLast(StopQuery())
             ZmqMsg().send(it.pingSocket)
         }
+        isolatedQueue.dispose()
     }
 
 }
