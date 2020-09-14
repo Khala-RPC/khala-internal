@@ -1,6 +1,4 @@
-package khala.internal.zmq
-
-import khala.internal.zmq.bindings.ZmqSocket
+package khala.internal.zmq.bindings
 
 external class Buffer {
 
@@ -27,7 +25,7 @@ internal actual class ZmqMsg actual constructor() {
 
     actual fun send(socket: ZmqSocket) {
         val byteBlocks = frames.toTypedArray()
-        socket.arraySender(byteBlocks)
+        socket.socket.send(byteBlocks)
         close()
     }
 

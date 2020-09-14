@@ -2,10 +2,6 @@ package khala.internal.zmq.bindings
 
 internal actual class ZmqSocket(internal val socket: dynamic, private val webSocket: Boolean) {
 
-    //private val varargWrapper = js("function(sendFun) { return function(arr) { sendFun.apply(this, arr); }; }")
-    private val varargWrapper = js("function(sendFun, socket) { return function(arr) { sendFun.apply(socket, arr); }; }")
-    internal val arraySender = varargWrapper(socket.send, socket)
-
     internal fun connect(address: String) {
         if (isClosed) println("Socket is already closed!")
         else socket.connect(address)

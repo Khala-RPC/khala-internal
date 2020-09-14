@@ -1,4 +1,4 @@
-package khala.internal.zmq
+package khala.internal.zmq.bindings
 
 import khala.internal.cinterop.czmq.*
 import kotlinx.cinterop.*
@@ -23,7 +23,7 @@ internal actual class ZmqMsg {
         message = zmsg_new()!!
     }
 
-    internal constructor(message: CPointer<zmsg_t>) {
+    private constructor(message: CPointer<zmsg_t>) {
         this.message = message
     }
 

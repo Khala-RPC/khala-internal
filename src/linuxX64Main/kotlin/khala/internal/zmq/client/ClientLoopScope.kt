@@ -1,11 +1,11 @@
 package khala.internal.zmq.client
 
+import co.touchlab.stately.isolate.IsolateState
 import khala.internal.zmq.bindings.ZmqContext
 import khala.internal.zmq.bindings.ZmqMsg
 
-private val varargWrapper = js("function(f) { return function() { return f(arguments); }; }")
-
 internal actual class ClientLoopScope<L, S>(
+    val isolatedQueue: IsolateState<ClientQueueState<L, S>>,
     val forwardSockets: MutableMap<String, SocketWithState<S>>,
     val forwardListener: ForwardListener<L, S>,
     val socketStateProducer: (L) -> S,
@@ -16,16 +16,7 @@ internal actual class ClientLoopScope<L, S>(
     actual fun sendMessage(address: String, msg: ZmqMsg) {
         val socket = forwardSockets[address]?.socket ?: run {
             val newSocket = ZmqContext.createAndConnectDealer(address)
-            val newSocketState = socketStateProducer(loopState)
-            forwardSockets[address] = SocketWithState(newSocket, newSocketState)
-            newSocket.socket.on("message", varargWrapper { args -> forwardListener(
-                this,
-                loopState,
-                newSocketState,
-                address,
-                newSocket,
-                ZmqMsg(args)
-            ) })
+            forwardSockets[address] = SocketWithState(newSocket, socketStateProducer(loopState))
             newSocket
         }
         msg.send(socket)
