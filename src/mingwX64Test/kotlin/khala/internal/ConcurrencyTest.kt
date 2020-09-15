@@ -23,6 +23,7 @@ class ConcurrencyTest {
     }
 
     /* CompletableDeferred on Native cannot be used from different workers. This test goes into deadlock */
+    /*
     @Ignore
     @Test
     fun testWorkerConcurrency() = runTest {
@@ -42,4 +43,5 @@ class ConcurrencyTest {
         println("Deferred finished")
         println(res)
     }
+     */
 }
