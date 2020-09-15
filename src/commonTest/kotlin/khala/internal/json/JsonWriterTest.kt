@@ -12,14 +12,14 @@ class JsonWriterTest {
         assertEquals("12345", writeJson(12345))
         assertEquals("12345.54321", writeJson(12345.54321))
         assertEquals("\"privet\"", writeJson("privet"))
-        assertEquals(
-            """[ null, false, 12, 2112, "ku" ]""".filterNot { it.isWhitespace() },
-            writeJson(listOf(null, false, 12, 2112, "ku")).filterNot { it.isWhitespace() }
+        assertEquallyParse(
+            """[ null, false, 12, 2112, "ku" ]""",
+            writeJson(listOf(null, false, 12, 2112, "ku"))
         )
-        assertEquals(
-            """{ "odin": 1, "dva": 22, "tri": "rofl", "chetire": { } }""".filterNot { it.isWhitespace() },
+        assertEquallyParse(
+            """{ "odin": 1, "dva": 22, "tri": "rofl", "chetire": { } }""",
                 writeJson(mapOf("odin" to 1, "dva" to 22, "tri" to "rofl", "chetire" to mapOf<String, Any?>()))
-                    .filterNot { it.isWhitespace() }
+
         )
     }
 

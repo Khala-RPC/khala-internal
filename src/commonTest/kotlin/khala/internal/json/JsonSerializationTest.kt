@@ -3,6 +3,10 @@ package khala.internal.json
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
+fun assertEquallyParse(expected: String, actual: String) {
+    assertEquals(parseJson(expected), parseJson(actual))
+}
+
 class JsonSerializationTest {
 
     @Test
