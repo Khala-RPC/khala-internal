@@ -50,4 +50,17 @@ class JsonTest {
         foo({ x -> list.add(x) }, parsedObj)
         println(list)
     }
+
+    @Test
+    fun testStringify() {
+        println(JSON.stringify(null))
+        println(JSON.stringify(true))
+        println(JSON.stringify(12345))
+        println(JSON.stringify(12345.4321))
+        println(JSON.stringify("sadasf"))
+        println(JSON.stringify(arrayOf(12, 34)))
+        println(JSON.stringify(listOf(12, 34)))
+        println(JSON.stringify(mapOf("odin" to 0, "dva" to "rofl")))
+    }
+
 }
