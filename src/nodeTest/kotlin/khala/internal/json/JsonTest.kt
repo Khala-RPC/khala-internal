@@ -10,6 +10,26 @@ class JsonTest {
     }
 
     @Test
+    fun testWtf() {
+        val wtf = JSON.parse<dynamic>("12345.123")
+        println(jsTypeOf(wtf))
+        println(wtf is Int)
+        println(wtf)
+    }
+
+    @Test
+    fun testWTFF() {
+        val wtf = JSON.parse<dynamic>("{ \"asd\": 1, \"dsa\": 2 }")
+        println(jsTypeOf(wtf))
+        println(wtf is Array<*>)
+        println(wtf)
+        val wtff = JSON.parse<dynamic>("[ 1, 2, 3, 4 ]")
+        println(jsTypeOf(wtff))
+        println(wtff is Array<*>)
+        println(wtff)
+    }
+
+    @Test
     fun testNodeJson() {
         assertParsedClass<Unit?>("null")
         assertParsedClass<Boolean>("true")
@@ -22,6 +42,12 @@ class JsonTest {
         println(parsedObj)
         println(jsTypeOf(parsedObj))
         println(parsedObj::class)
+        val list = arrayListOf<dynamic>()
         assertParsedClass<Any>("""{ "lol": "ku", "pri": 1234 }""")
+        js("""for (var k in {lol: '1234dsa'}) { console.log(k); }""")
+        //js("""for (var k in parsedObj) { list.add(k); }""")
+        val foo = js("""function(listAdd, obj) { for (var k in parsedObj) { listAdd(k + parsedObj[k]); } }""")
+        foo({ x -> list.add(x) }, parsedObj)
+        println(list)
     }
 }
