@@ -2,11 +2,13 @@ package khala.internal.serialization.binary
 
 import io.ktor.utils.io.core.*
 
-class PayloadReader(bytes: ByteArray) {
+class BinaryPayloadReader(bytes: ByteArray) {
 
     private val bytePacket: ByteReadPacket = ByteReadPacket(bytes)
 
     fun readByte(): Byte = bytePacket.readByte()
+
+    fun readBoolean(): Boolean = bytePacket.readByte() != 0.toByte()
 
     fun readInt(): Int = bytePacket.readInt()
 
@@ -16,5 +18,7 @@ class PayloadReader(bytes: ByteArray) {
         val length = bytePacket.readInt()
         return bytePacket.readTextExact(length)
     }
+
+
 
 }
