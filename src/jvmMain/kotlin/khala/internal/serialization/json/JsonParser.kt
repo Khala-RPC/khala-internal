@@ -1,15 +1,15 @@
-package khala.internal.json
+package khala.internal.serialization.json
 
 import org.json.JSONArray
 import org.json.JSONObject
 import org.json.JSONTokener
 
-internal actual fun parseJson(jsonString: String): Any? {
+actual fun parseJson(jsonString: String): Structured {
     val parsed = JSONTokener(jsonString).nextValue()
     return parsedToStructured(parsed)
 }
 
-private fun parsedToStructured(parsed: Any?): Any? {
+private fun parsedToStructured(parsed: Any?): Structured {
     parsed ?: return null
     return when (parsed) {
         JSONObject.NULL -> null
@@ -20,11 +20,11 @@ private fun parsedToStructured(parsed: Any?): Any? {
     }
 }
 
-private fun jsonArrayToStructured(parsed: JSONArray): Any? {
+private fun jsonArrayToStructured(parsed: JSONArray): Structured {
     return parsed.map { parsedToStructured(it) }
 }
 
-private fun jsonObjectToStructured(parsed: JSONObject): Any? {
+private fun jsonObjectToStructured(parsed: JSONObject): Structured {
     val map = mutableMapOf<String, Any?>()
     parsed.keys().forEach {
         map[it] = parsedToStructured(parsed[it])

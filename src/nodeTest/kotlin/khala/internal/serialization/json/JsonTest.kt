@@ -1,4 +1,4 @@
-package khala.internal.json
+package khala.internal.serialization.json
 
 import kotlin.test.Test
 import kotlin.test.assertTrue

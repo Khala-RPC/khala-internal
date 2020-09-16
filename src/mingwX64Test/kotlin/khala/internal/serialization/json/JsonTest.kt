@@ -1,4 +1,4 @@
-package khala.internal.json
+package khala.internal.serialization.json
 
 import khala.internal.cinterop.json.*
 import kotlinx.cinterop.*

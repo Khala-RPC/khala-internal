@@ -1,14 +1,14 @@
-package khala.internal.json
+package khala.internal.serialization.json
 
 import cnames.structs.json_object
 import khala.internal.cinterop.json.*
 import kotlinx.cinterop.*
 
-internal actual fun parseJson(jsonString: String): Any? {
+actual fun parseJson(jsonString: String): Structured {
     return parseJson(json_tokener_parse(jsonString))
 }
 
-private fun parseJson(jsonObject: CPointer<json_object>?): Any? {
+private fun parseJson(jsonObject: CPointer<json_object>?): Structured {
     jsonObject ?: return null
     return when (json_object_get_type(jsonObject)) {
         json_type.json_type_null -> null

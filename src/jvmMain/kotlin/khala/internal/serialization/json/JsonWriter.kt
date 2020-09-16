@@ -1,14 +1,14 @@
-package khala.internal.json
+package khala.internal.serialization.json
 
 import org.json.JSONArray
 import org.json.JSONObject
 import org.json.JSONStringer
 
-internal actual fun writeJson(jsonObject: Any?): String {
-    return JSONStringer.valueToString(structuredToJson(jsonObject))
+actual fun writeJson(structuredObject: Structured): String {
+    return JSONStringer.valueToString(structuredToJson(structuredObject))
 }
 
-private fun structuredToJson(structured: Any?): Any? {
+private fun structuredToJson(structured: Structured): Any? {
     structured ?: return JSONObject.NULL
     return when (structured) {
         is Boolean, is Int, is Double, is String -> structured

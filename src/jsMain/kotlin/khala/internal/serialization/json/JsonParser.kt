@@ -1,31 +1,27 @@
-package khala.internal.json
+package khala.internal.serialization.json
 
-internal actual fun parseJson(jsonString: String): Any? {
+actual fun parseJson(jsonString: String): Structured {
     val parsedObject = JSON.parse<Any?>(jsonString)
     return parsedToStructured(parsedObject)
 }
 
-private fun parsedToStructured(parsed: Any?): Any? {
+private fun parsedToStructured(parsed: Any?): Structured {
     parsed ?: return null
     return when (parsed) {
-        // DO NOT JOIN THIS CHECKS IN ONE LINE, IT WILL NOT WORK BECAUSE OF STUPID JS TYPE SYSTEM
-        is Boolean -> parsed
-        is Int -> parsed
-        is Double -> parsed
-        is String -> parsed
+        is Boolean, is Int, is Double, is String -> parsed
         is Array<*> -> parsedArrayToStructured(parsed)
         else -> parsedObjectToStructured(parsed)
     }
 }
 
-private fun parsedArrayToStructured(parsed: Array<*>): Any? {
+private fun parsedArrayToStructured(parsed: Array<*>): Structured {
     return parsed.map { parsedToStructured(it) }
 }
 
 private val objectPropertiesGetter =
     js("""function(obj, addEntry) { for (var k in obj) { addEntry(k, obj[k]); } }""")
 
-private fun parsedObjectToStructured(parsed: dynamic): Any? {
+private fun parsedObjectToStructured(parsed: dynamic): Structured {
     parsed ?: return null
     val map = mutableMapOf<String, Any?>()
     objectPropertiesGetter(parsed) { key, value ->

@@ -1,4 +1,4 @@
-package khala.internal.json
+package khala.internal.serialization.json
 
 import org.json.JSONTokener
 import kotlin.test.Test
