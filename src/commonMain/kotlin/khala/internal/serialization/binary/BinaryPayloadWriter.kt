@@ -1,7 +1,7 @@
 package khala.internal.serialization.binary
 
 import io.ktor.utils.io.core.*
-import khala.internal.events.client.LocalFunction
+import khala.internal.events.functions.LocalFunction
 import khala.internal.events.client.RemoteFunction
 
 class BinaryPayloadWriter {

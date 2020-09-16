@@ -19,11 +19,9 @@ object KhalaClient {
     fun invokeRemoteFunction(
         address: String,
         name: String,
-        arg: PayloadWriter,
-        onResult: (PayloadReader) -> Unit,
-        onError: (String) -> Unit
+        invoker: (PayloadWriter) -> ((PayloadReader) -> Unit, (String) -> Unit) -> () -> Unit
     ) {
-
+        TODO()
     }
 
 }
