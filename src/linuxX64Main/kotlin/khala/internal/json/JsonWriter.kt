@@ -22,7 +22,7 @@ private fun Any?.toJson(): CPointer<json_object>? {
 }
 
 private fun List<*>.toJsonList(): CPointer<json_object>? {
-    val arr = json_object_new_array(this.size)
+    val arr = json_object_new_array()
     repeat(this.size) {
         json_object_array_put_idx(arr, it.convert(), this[it].toJson())
     }
