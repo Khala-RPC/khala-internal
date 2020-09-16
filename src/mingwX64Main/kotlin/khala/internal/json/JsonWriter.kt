@@ -9,7 +9,7 @@ internal actual fun writeJson(jsonObject: Any?): String {
 }
 
 private fun Any?.toJson(): CPointer<json_object>? {
-    this ?: return json_object_new_null()
+    this ?: return null
     return when (this) {
         is Boolean -> json_object_new_boolean(if (this) 1 else 0)
         is Int -> json_object_new_int(this)

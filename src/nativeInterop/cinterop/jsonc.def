@@ -1,4 +1,4 @@
-headers = json.h arraylist.h
+headers = json.h arraylist.h json_object.h
 compilerOpts.linux = -I/usr/include/json-c -I/usr/local/include/json-c
 linkerOpts.linux = -L/usr/lib/x86_64-linux-gnu -ljson-c
 linkerOpts.osx = -L/opt/local/lib -L/usr/local/opt/json-c/lib -ljson-c
@@ -7,8 +7,3 @@ linkerOpts.mingw = -Lsrc/mingwX64Main/resources/bin -ljson-c -v
 
 ---
 
-#include "arraylist.h"
-
-static void* arraylist_getidx(struct array_list *al, size_t i) {
-    return array_list_get_idx(al, i);
-}
