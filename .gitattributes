@@ -1,1 +1,2 @@
-*.h *.am linguist-vendored
+*.h linguist-vendored
+*.am linguist-vendored
