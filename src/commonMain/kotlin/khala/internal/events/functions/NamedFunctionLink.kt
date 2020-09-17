@@ -7,7 +7,7 @@ import khala.internal.serialization.PayloadWriter
 /**
  * Link to named remote function which is publicly available to all queries.
  */
-class RemoteFunctionLink(val address: String, val name: String) : FunctionLink {
+class NamedFunctionLink(val address: String, val name: String) : RemoteFunctionLink {
 
     override fun invoke(
         invoker: (PayloadWriter) -> ((PayloadReader) -> Unit, (String) -> Unit) -> () -> Unit

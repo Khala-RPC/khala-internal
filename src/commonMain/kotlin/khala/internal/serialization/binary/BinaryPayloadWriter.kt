@@ -2,9 +2,12 @@ package khala.internal.serialization.binary
 
 import io.ktor.utils.io.core.*
 import khala.internal.events.functions.LocalFunction
-import khala.internal.events.client.RemoteFunction
+import khala.internal.events.functions.NamedFunctionLink
+import khala.internal.events.functions.RemoteFunctionLink
+import khala.internal.events.functions.TheirFunctionLink
+import khala.internal.serialization.PayloadWriter
 
-class BinaryPayloadWriter {
+class BinaryPayloadWriter : PayloadWriter() {
 
     private val bytePacketBuilder = BytePacketBuilder()
 
@@ -30,18 +33,21 @@ class BinaryPayloadWriter {
     }
 
     fun addLocalFunction(localFunction: LocalFunction) {
-
+        val localFunctionID = putLocalFunction(localFunction)
+        bytePacketBuilder.writeByte(1)
+        bytePacketBuilder.writeInt(localFunctionID)
     }
 
-    fun addRemoteFunction(address: String, name: String) {
-
+    fun addNamedFunction(address: String, name: String) {
+        bytePacketBuilder.writeByte(0)
+        writeString(address)
+        writeString(name)
     }
 
-    fun addRemoteFunctionLink(remoteFunctionLink: RemoteFunction) {
-        addRemoteFunction(remoteFunctionLink.address, remoteFunctionLink.name)
+    fun addNamedFunctionLink(namedFunctionLink: NamedFunctionLink) {
+        addNamedFunction(namedFunctionLink.address, namedFunctionLink.name)
     }
 
-
-    fun build(): ByteArray = bytePacketBuilder.build().readBytes()
+    override fun buildBinary(): ByteArray = bytePacketBuilder.build().readBytes()
 
 }

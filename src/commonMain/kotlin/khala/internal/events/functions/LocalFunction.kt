@@ -15,7 +15,7 @@ class LocalFunction(
      * Instead each binding MUST compute the function in some sort of thread pool, coroutine dispatcher, etc.
      * Result/error returning callbacks may be called from any thread, these callbacks are fully thread-safe.
      * This function should return a callback that can be used to cancel the function computation.
-     * Cancellation callback will be called from IO thread, so bindings MUST provide required thread safety.
+     * Cancellation callback will be called from event loop thread, so bindings MUST provide required thread safety.
      */
     val onCall: (arg: PayloadReader, returnResult: (BinaryPayloadWriter) -> Unit, returnError: (String) -> Unit) -> () -> Unit,
     /**

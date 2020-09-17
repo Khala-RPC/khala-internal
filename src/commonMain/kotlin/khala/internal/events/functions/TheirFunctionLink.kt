@@ -6,13 +6,13 @@ import khala.internal.zmq.bindings.BinaryData
 
 /**
  * Link to an anonymous function defined on connected client.
- * This class is internal, bindings should use only [FunctionLink] interface for received function arguments.
+ * This class is internal, bindings should use only [RemoteFunctionLink] interface for received function arguments.
  */
 internal class TheirFunctionLink(
     val clientIdentity: BinaryData,
     val theirQueryID: Long,
     val theirFunctionID: Int
-) : FunctionLink {
+) : RemoteFunctionLink {
 
     override fun invoke(
         invoker: (PayloadWriter) -> ((PayloadReader) -> Unit, (String) -> Unit) -> () -> Unit

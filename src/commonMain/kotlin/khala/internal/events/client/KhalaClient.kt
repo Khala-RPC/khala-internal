@@ -24,4 +24,8 @@ object KhalaClient {
         TODO()
     }
 
+    fun setZmqHighWaterMark(highWaterMark: Int) {
+        TODO()
+    }
+
 }
