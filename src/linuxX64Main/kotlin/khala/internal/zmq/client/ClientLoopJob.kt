@@ -10,6 +10,7 @@ import kotlinx.cinterop.allocArray
 import kotlinx.cinterop.convert
 import kotlinx.cinterop.get
 import kotlinx.cinterop.memScoped
+import kotlin.system.getTimeMillis
 
 internal class ClientLoopJobInitialState<L, S>(
     val isolatedQueue: IsolateState<ClientQueueState<L, S>>,
@@ -33,6 +34,13 @@ internal fun <L, S> clientLoopJob(initialState: ClientLoopJobInitialState<L, S>)
     )
     with(loopScope) {
         while (!isStopped) {
+            val currentTime = getTimeMillis()
+            while (scheduledBlocks.isNotEmpty()) {
+                val scheduledBlockTime = scheduledBlocks.peek().scheduleTimeMillis
+                if (scheduledBlockTime > currentTime) break
+                val scheduledBlock = scheduledBlocks.poll()
+                scheduledBlock.block(this, loopState)
+            }
             val forwardSocketsList = forwardSockets.toList()
             val allSocketsList = arrayListOf(pongSocket)
             allSocketsList += forwardSocketsList.map { it.second.socket }

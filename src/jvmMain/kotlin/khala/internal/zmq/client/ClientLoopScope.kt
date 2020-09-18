@@ -4,6 +4,7 @@ import co.touchlab.stately.isolate.IsolateState
 import khala.internal.zmq.bindings.ZmqContext
 import khala.internal.zmq.bindings.ZmqMsg
 import org.zeromq.ZPoller
+import java.util.*
 
 internal actual class ClientLoopScope<L, S>(
     val isolatedQueue: IsolateState<ClientQueueState<L, S>>,
@@ -14,6 +15,8 @@ internal actual class ClientLoopScope<L, S>(
     val loopState: L,
     var isStopped: Boolean
 ) {
+
+    val scheduledBlocks = PriorityQueue<ClientScheduledBlock<L, S>>()
 
     actual fun sendMessage(address: String, msg: ZmqMsg) {
         val socket = forwardSockets[address]?.socket ?: run {
@@ -34,6 +37,16 @@ internal actual class ClientLoopScope<L, S>(
             poller.unregister(it.socket)
             it.socket.close()
         }
+    }
+
+    actual fun invokeAfterTimeout(
+        timeoutMillis: Long,
+        block: ClientLoopScope<L, S>.(L) -> Unit
+    ) {
+        scheduledBlocks.add(ClientScheduledBlock(
+            System.currentTimeMillis() + timeoutMillis,
+            block
+        ))
     }
 
 }

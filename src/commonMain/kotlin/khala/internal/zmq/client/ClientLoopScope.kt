@@ -13,6 +13,13 @@ internal expect class ClientLoopScope<L, S> {
     fun sendMessage(address: String, msg: ZmqMsg)
     fun remove(address: String)
 
+    /**
+     * Invokes the lambda in event loop thread after timeout.
+     * Timeout is NOT exact, lambda may be called a lot later if the loop is high loaded.
+     * Few seconds of delay are OK for this function.
+     */
+    fun invokeAfterTimeout(timeoutMillis: Long, block: ClientLoopScope<L, S>.(L) -> Unit)
+
 }
 
 internal inline fun <L, S> ClientLoopScope<L, S>.sendForward(address: String, block: MsgBuilder.() -> Unit) {
