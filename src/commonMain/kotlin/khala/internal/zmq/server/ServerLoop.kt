@@ -6,7 +6,7 @@ internal typealias BackwardListener<L> =
         ServerLoopScope<L>.(loopState: L, msg: ZmqMsg) -> Unit
 
 /**
- * Thread-safe ZMQ server.
+ * Thread-safe ZMQ server. //TODO Make multiple bind addresses!!!!!!!!!
  */
 internal expect class ServerLoop<L>(
     loopStateProducer: () -> L,

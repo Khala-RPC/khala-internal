@@ -4,6 +4,7 @@ import khala.internal.zmq.bindings.ZmqContext
 import khala.internal.zmq.bindings.ZmqMsg
 
 private val varargWrapper = js("function(f) { return function() { return f(arguments); }; }")
+private val setTimeout = js("function(f, d) { setTimeout(f, d); }")
 
 internal actual class ClientLoopScope<L, S>(
     val forwardSockets: MutableMap<String, SocketWithState<S>>,
@@ -33,6 +34,14 @@ internal actual class ClientLoopScope<L, S>(
 
     actual fun remove(address: String) {
         forwardSockets.remove(address)?.socket?.close()
+    }
+
+
+    actual fun invokeAfterTimeout(
+        timeoutMillis: Long,
+        block: ClientLoopScope<L, S>.(L) -> Unit
+    ) {
+        setTimeout({ block(this, loopState) }, timeoutMillis)
     }
 
 }

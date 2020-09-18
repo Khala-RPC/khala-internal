@@ -33,7 +33,14 @@ internal fun <L, S> clientLoopJob(initialState: ClientLoopJobInitialState<L, S>)
             true
         }, ZMQ.Poller.POLLIN)
         while (!isStopped) { // TODO use ZLoop instead of poller
-            poller.poll(-1L)
+            val currentTime = System.currentTimeMillis()
+            while (scheduledBlocks.isNotEmpty()) {
+                val scheduledBlockTime = scheduledBlocks.peek().scheduleTimeMillis
+                if (scheduledBlockTime > currentTime) break
+                val scheduledBlock = scheduledBlocks.poll()
+                scheduledBlock.block(this, loopState)
+            }
+            poller.poll(1000L)
         }
     }
 }

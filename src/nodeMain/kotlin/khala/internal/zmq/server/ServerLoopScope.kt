@@ -2,6 +2,9 @@ package khala.internal.zmq.server
 
 import khala.internal.zmq.bindings.ZmqMsg
 import khala.internal.zmq.bindings.ZmqSocket
+import khala.internal.zmq.client.ClientLoopScope
+
+private val setTimeout = js("function(f, d) { setTimeout(f, d); }")
 
 internal actual class ServerLoopScope<L>(
     val backwardSocket: ZmqSocket,
@@ -12,4 +15,13 @@ internal actual class ServerLoopScope<L>(
     actual fun sendMessage(msg: ZmqMsg) {
         msg.send(backwardSocket)
     }
+
+
+    actual fun invokeAfterTimeout(
+        timeoutMillis: Long,
+        block: ServerLoopScope<L>.(L) -> Unit
+    ) {
+        setTimeout({ block(this, loopState) }, timeoutMillis)
+    }
+
 }

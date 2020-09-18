@@ -1,5 +1,7 @@
 package khala.internal.json
 
+import khala.internal.serialization.json.parseJson
+import khala.internal.serialization.json.writeJson
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
