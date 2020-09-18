@@ -37,6 +37,8 @@ publishing {
 repositories {
     mavenCentral()
     mavenLocal()
+    jcenter()
+    maven("https://dl.bintray.com/mipt-npm/dev")
 }
 
 val mingwPath = File(System.getenv("MINGW64_DIR") ?: "C:/msys64/mingw64")
@@ -119,7 +121,8 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation("co.touchlab:stately-isolate:1.1.1-a1")
-                implementation("org.jetbrains.kotlinx:kotlinx-io:0.1.16")
+                implementation("org.jetbrains.kotlinx:kotlinx-io:0.2.0-npm-dev-11")
+                //implementation("org.jetbrains.kotlinx:kotlinx-io:0.1.16")
             }
         }
         val commonTest by getting {

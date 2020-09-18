@@ -3,11 +3,15 @@ package khala.internal.serialization.binary
 import khala.internal.events.functions.NamedFunctionLink
 import khala.internal.events.functions.RemoteFunctionLink
 import khala.internal.serialization.PayloadReader
-import kotlinx.io.core.ByteReadPacket
+import kotlinx.io.ByteArrayInput
+import kotlinx.io.readByte
+import kotlinx.io.readDouble
+import kotlinx.io.readInt
+import kotlinx.io.text.readUtf8String
 
 class BinaryPayloadReader(bytes: ByteArray) : PayloadReader(bytes) {
 
-    private val bytePacket: ByteReadPacket = ByteReadPacket(bytes)
+    private val bytePacket = ByteArrayInput(bytes)
 
     fun readByte(): Byte = bytePacket.readByte()
 
@@ -19,7 +23,7 @@ class BinaryPayloadReader(bytes: ByteArray) : PayloadReader(bytes) {
 
     fun readString(): String {
         val length = bytePacket.readInt()
-        return bytePacket.readTextExact(length)
+        return bytePacket.readUtf8String(length)
     }
 
     fun readRemoteFunctionLink(): RemoteFunctionLink {

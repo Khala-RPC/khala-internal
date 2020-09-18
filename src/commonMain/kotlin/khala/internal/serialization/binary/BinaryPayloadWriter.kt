@@ -3,12 +3,14 @@ package khala.internal.serialization.binary
 import khala.internal.events.functions.LocalFunction
 import khala.internal.events.functions.NamedFunctionLink
 import khala.internal.serialization.PayloadWriter
-import kotlinx.io.core.BytePacketBuilder
-import kotlinx.io.core.readBytes
+import kotlinx.io.ByteArrayOutput
+import kotlinx.io.text.writeUtf8String
+import kotlinx.io.writeDouble
+import kotlinx.io.writeInt
 
 class BinaryPayloadWriter : PayloadWriter() {
 
-    private val bytePacketBuilder = BytePacketBuilder()
+    private val bytePacketBuilder = ByteArrayOutput()
 
     fun writeByte(v: Byte) {
         bytePacketBuilder.writeByte(v)
@@ -28,7 +30,7 @@ class BinaryPayloadWriter : PayloadWriter() {
 
     fun writeString(str: String) {
         bytePacketBuilder.writeInt(str.length)
-        bytePacketBuilder.append(str)
+        bytePacketBuilder.writeUtf8String(str)
     }
 
     fun addLocalFunction(localFunction: LocalFunction) {
@@ -47,6 +49,6 @@ class BinaryPayloadWriter : PayloadWriter() {
         addNamedFunction(namedFunctionLink.address, namedFunctionLink.name)
     }
 
-    override fun buildBinary(): ByteArray = bytePacketBuilder.build().readBytes()
+    override fun buildBinary(): ByteArray = bytePacketBuilder.toByteArray()
 
 }
