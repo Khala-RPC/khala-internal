@@ -119,7 +119,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation("co.touchlab:stately-isolate:1.1.1-a1")
-                implementation("io.ktor:ktor-io:1.3.1")
+                implementation("org.jetbrains.kotlinx:kotlinx-io:0.1.16")
             }
         }
         val commonTest by getting {

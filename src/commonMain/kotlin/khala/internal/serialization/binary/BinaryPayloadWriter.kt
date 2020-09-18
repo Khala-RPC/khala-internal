@@ -1,11 +1,10 @@
 package khala.internal.serialization.binary
 
-import io.ktor.utils.io.core.*
 import khala.internal.events.functions.LocalFunction
 import khala.internal.events.functions.NamedFunctionLink
-import khala.internal.events.functions.RemoteFunctionLink
-import khala.internal.events.functions.TheirFunctionLink
 import khala.internal.serialization.PayloadWriter
+import kotlinx.io.core.BytePacketBuilder
+import kotlinx.io.core.readBytes
 
 class BinaryPayloadWriter : PayloadWriter() {
 
