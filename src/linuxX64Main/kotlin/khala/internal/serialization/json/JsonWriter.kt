@@ -4,8 +4,8 @@ import khala.internal.cinterop.json.*
 import kotlinx.cinterop.*
 
 actual fun writeJson(structuredObject: Structured): String {
-    val json = jsonObject.toJson()
-    return json_object_to_json_string(json)?.toKString() ?: error("Error while serializing $jsonObject to JSON")
+    val json = structuredObject.toJson()
+    return json_object_to_json_string(json)?.toKString() ?: error("Error while serializing $structuredObject to JSON")
 }
 
 private fun Structured.toJson(): CPointer<json_object>? {
