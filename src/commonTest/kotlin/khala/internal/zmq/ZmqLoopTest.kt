@@ -5,6 +5,7 @@ import co.touchlab.stately.concurrency.value
 import khala.internal.forAllProtocols
 import khala.internal.runTest
 import khala.internal.waitForCondition
+import khala.internal.zmq.bindings.ZmqMsg
 import khala.internal.zmq.client.ClientLoop
 import khala.internal.zmq.client.sendForward
 import khala.internal.zmq.server.ServerLoop
@@ -21,7 +22,11 @@ class ZmqLoopTest {
                 loopStateProducer = {},
                 socketStateProducer = {},
                 forwardListener = { _, _, _, _, msg ->
-                    answer.value = msg.popString() + msg.popString() + msg.popString()
+                    answer.value = buildString {
+                        append(msg.popString())
+                        append(msg.popString())
+                        append(msg.popString())
+                    }
                 }
             )
             val serverLoop = ServerLoop(

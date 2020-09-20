@@ -1,6 +1,6 @@
 # khala-internal
 
-![logo](logo.jpg)
+![logo](logo.png)
 
 Internal implementation of Khala communication protocol using Kotlin/Multiplatform.
 

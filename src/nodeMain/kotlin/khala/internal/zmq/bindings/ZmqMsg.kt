@@ -1,18 +1,25 @@
 package khala.internal.zmq.bindings
 
+import org.khronos.webgl.ArrayBuffer
+import org.khronos.webgl.Int8Array
+
 external class Buffer {
 
     companion object {
         fun from(str: String, encoding: String = definedExternally): Buffer
     }
 
+    fun toString(encoding: String = definedExternally, start: Int = definedExternally, end: Int = definedExternally): String
+
 }
+
+fun Buffer.bufferToString(): String = this.toString("utf8")
 
 actual typealias BinaryData = Buffer
 
 internal actual class ZmqMsg actual constructor() {
 
-    private val frames: ArrayDeque<BinaryData> = ArrayDeque()
+    private val frames: ArrayDeque<Buffer> = ArrayDeque()
 
     // From arguments object
     constructor(messages: dynamic) : this() {
@@ -37,12 +44,16 @@ internal actual class ZmqMsg actual constructor() {
         frames.addLast(Buffer.from(str))
     }
 
-    actual fun popBytes(): BinaryData = frames.removeFirst()
+    actual fun popBytes(): BinaryData = frames.removeFirst() as Buffer
 
-    actual fun popString(): String = frames.removeFirst().toString()
+    actual fun popString(): String = frames.removeFirst().toString("utf8")//(Int8Array(frames.removeFirst().buffer as ArrayBuffer) as ByteArray).toString()
 
     actual fun close() {
         frames.clear()
     }
+
+}
+
+private fun ArrayBuffer.toUtf8() {
 
 }

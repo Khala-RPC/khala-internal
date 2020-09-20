@@ -54,7 +54,8 @@ kotlin {
             kotlinOptions.jvmTarget = "1.8"
         }
     }
-    js {
+    js("browser", IR) {
+        attributes.attribute(Attribute.of(String::class.java), "browser")
         browser {
             testTask {
                 useKarma {
@@ -63,11 +64,13 @@ kotlin {
                 }
             }
         }
+        binaries.executable()
     }
-    js("node") {
+    js("node", IR) {
         attributes.attribute(Attribute.of(String::class.java), "node")
         nodejs {
         }
+        binaries.executable()
     }
     val hostOs = System.getProperty("os.name")
     val isLinuxX64 = hostOs == "Linux"
@@ -108,7 +111,7 @@ kotlin {
         }
     }
 
-    configure(listOf(targets["metadata"], jvm(), js(), js("node"))) {
+    configure(listOf(targets["metadata"], jvm(), js("browser"), js("node"))) {
         mavenPublication {
             val targetPublication = this@mavenPublication
             tasks.withType<AbstractPublishToMaven>()
@@ -147,12 +150,12 @@ kotlin {
                 implementation("org.junit.jupiter:junit-jupiter-params:5.5.2")
             }
         }
-        val jsMain by getting {
+        val browserMain by getting {
             dependencies {
                 implementation(npm(name = "@prodatalab/jszmq", version = "0.2.2"))
             }
         }
-        val jsTest by getting {
+        val browserTest by getting {
             dependencies {
                 implementation(kotlin("test-js"))
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.3.9")
