@@ -1,6 +1,6 @@
 package khala.internal.zmq.bindings
 
-internal actual class ZmqSocket(internal val socket: dynamic, private val webSocket: Boolean) {
+internal actual class ZmqSocket(internal val socket: dynamic) {
 
     internal fun connect(address: String) {
         if (isClosed) println("Socket is already closed!")
@@ -16,20 +16,6 @@ internal actual class ZmqSocket(internal val socket: dynamic, private val webSoc
     internal fun bind(address: String) {
         if (isClosed) println("Socket is already closed!")
         else if (!bindFinished) bindQueue.add(address)
-        else if (!webSocket) {
-            bindFinished = false
-            socket.bind(address) { err ->
-                bindFinished = true
-                if (err != undefined) {
-                    println(err)
-                }
-                if (bindQueue.isNotEmpty()) {
-                    bind(bindQueue.removeFirst())
-                } else if (shouldClose) {
-                    close()
-                }
-            }
-        }
         else {
             bindFinished = false
             socket.bind(address)

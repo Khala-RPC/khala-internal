@@ -38,7 +38,7 @@ jobs:
 
       - name: Build Linux
         if: matrix.os == 'ubuntu-latest'
-        run: ./gradlew build
+        run: ./gradlew build check
 
       - name: Build Windows
         if: matrix.os == 'windows-latest'

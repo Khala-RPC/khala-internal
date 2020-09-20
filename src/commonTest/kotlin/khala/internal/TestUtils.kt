@@ -16,9 +16,24 @@ internal inline fun forAllProtocols(port: Int, block: (bindAddress: String, conn
         val newPort = port + index
         when (protocol) {
             "inproc" -> block("inproc://$newPort", "inproc://$newPort")
-            "ipc" -> block("ipc://test/ipc/$newPort", "ipc://test/ipc/$newPort")
+            "ipc" -> block("ipc://build/test-ipc/ipc/$newPort", "ipc://build/test-ipc/ipc/$newPort")
             else -> block("$protocol://*:$newPort", "$protocol://localhost:$newPort")
         }
+    }
+}
+
+/** Runs [block] for all supported protocols on testing platform, providing a pair of connected dealers */
+internal inline fun forAllDealerPairs(port: Int, block: (bound: ZmqSocket, connected: ZmqSocket) -> Unit) {
+    forAllProtocols(port = port) { bindAddress, connectAddress ->
+        block(ZmqContext.createAndBindDealer(bindAddress), ZmqContext.createAndConnectDealer(connectAddress))
+    }
+}
+
+
+/** Runs [block] for all supported protocols on testing platform, providing a pair of connected router and dealer */
+internal inline fun forAllRouterDealer(port: Int, block: (router: ZmqSocket, dealer: ZmqSocket) -> Unit) {
+    forAllProtocols(port = port) { bindAddress, connectAddress ->
+        block(ZmqContext.createAndBindRouter(bindAddress), ZmqContext.createAndConnectDealer(connectAddress))
     }
 }
 
@@ -28,10 +43,4 @@ internal suspend inline fun waitForCondition(timeout: Int, condition: () -> Bool
         delay(10L)
         if (condition()) return
     }
-}
-
-internal fun twoDealers(protocol: String): Pair<ZmqSocket, ZmqSocket> {
-    val sock1 = ZmqContext.createAndBindDealer("$protocol://*:12345")
-    val sock2 = ZmqContext.createAndConnectDealer("$protocol://localhost:12345")
-    return Pair(sock1, sock2)
 }
