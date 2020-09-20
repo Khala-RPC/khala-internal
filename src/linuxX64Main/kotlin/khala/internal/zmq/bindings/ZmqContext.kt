@@ -28,3 +28,5 @@ internal actual object ZmqContext {
     }
 
 }
+
+internal actual fun ZmqContext.nextLoopId(): Int = loopCounter.addAndGet(1)

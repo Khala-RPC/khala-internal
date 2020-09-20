@@ -1,6 +1,5 @@
 package khala.internal.zmq
 
-
 //TODO Make proper priority queue implementation through binary heap
 internal class PriorityQueue<T : Comparable<T>> {
 

@@ -16,7 +16,7 @@ internal inline fun forAllProtocols(port: Int, block: (bindAddress: String, conn
         val newPort = port + index
         when (protocol) {
             "inproc" -> block("inproc://$newPort", "inproc://$newPort")
-            "ipc" -> block("ipc://test/ipc/$newPort", "ipc://test/ipc/$newPort")
+            "ipc" -> block("ipc://build/test-ipc/ipc/$newPort", "ipc://build/test-ipc/ipc/$newPort")
             else -> block("$protocol://*:$newPort", "$protocol://localhost:$newPort")
         }
     }

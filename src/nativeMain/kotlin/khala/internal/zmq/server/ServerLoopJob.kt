@@ -1,15 +1,9 @@
 package khala.internal.zmq.server
 
 import co.touchlab.stately.isolate.IsolateState
-import khala.internal.cinterop.zmq.ZMQ_POLLIN
-import khala.internal.cinterop.zmq.zmq_poll
-import khala.internal.cinterop.zmq.zmq_pollitem_t
 import khala.internal.zmq.bindings.ZmqContext
 import khala.internal.zmq.bindings.ZmqMsg
-import kotlinx.cinterop.allocArray
-import kotlinx.cinterop.convert
-import kotlinx.cinterop.get
-import kotlinx.cinterop.memScoped
+import khala.internal.zmq.bindings.poll
 import kotlin.system.getTimeMillis
 
 internal class ServerLoopJobInitialState<L>(
@@ -43,21 +37,9 @@ internal fun <L> serverLoopJob(initialState: ServerLoopJobInitialState<L>) {
             }
             val allSocketsList = arrayListOf(pongSocket, backwardSocket)
             //TODO use zloop because poller can read only 1 msg
-            memScoped {
-                val pollItems = allocArray<zmq_pollitem_t>(allSocketsList.size)
-                for (i in allSocketsList.indices) {
-                    pollItems[i].socket = allSocketsList[i].socket
-                    pollItems[i].events = khala.internal.cinterop.czmq.ZMQ_POLLIN.convert()
-                }
-                val rc = zmq_poll(pollItems, allSocketsList.size, -1)
-                // TODO return code check
-                for (i in allSocketsList.indices) {
-                    if (pollItems[i].revents == ZMQ_POLLIN.convert<Short>()) {
-                        val msg = ZmqMsg.recv(allSocketsList[i])!! //TODO handle ZMQ error
-                        if (i == 0) handlePongSocket(msg)
-                        else this@with.backwardListener(loopState, msg)
-                    }
-                }
+            poll(allSocketsList) { i, msg ->
+                if (i == 0) handlePongSocket(msg)
+                else this@with.backwardListener(loopState, msg)
             }
         }
     }

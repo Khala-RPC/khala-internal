@@ -4,6 +4,7 @@ import co.touchlab.stately.isolate.IsolateState
 import khala.internal.zmq.bindings.ZmqContext
 import khala.internal.zmq.bindings.ZmqMsg
 import khala.internal.zmq.bindings.ZmqSocket
+import khala.internal.zmq.bindings.nextLoopId
 import kotlin.native.concurrent.AtomicInt
 import kotlin.native.concurrent.TransferMode
 import kotlin.native.concurrent.Worker
@@ -27,7 +28,7 @@ internal actual class ClientLoop<L, S> actual constructor(
     forwardListener: ForwardListener<L, S>
 )  {
 
-    private val loopId = ZmqContext.loopCounter.addAndGet(1)
+    private val loopId = ZmqContext.nextLoopId()
 
     private val loopWorker = Worker.start(name = "LOOP_WORKER_$loopId")
 
