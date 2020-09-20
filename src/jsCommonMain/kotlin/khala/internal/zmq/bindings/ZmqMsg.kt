@@ -1,8 +1,5 @@
 package khala.internal.zmq.bindings
 
-import org.khronos.webgl.ArrayBuffer
-import org.khronos.webgl.Int8Array
-
 external class Buffer {
 
     companion object {
@@ -32,7 +29,7 @@ internal actual class ZmqMsg actual constructor() {
 
     actual fun send(socket: ZmqSocket) {
         val byteBlocks = frames.toTypedArray()
-        socket.socket.send(byteBlocks)
+        socket.rawSocket.send(byteBlocks)
         close()
     }
 
@@ -51,9 +48,5 @@ internal actual class ZmqMsg actual constructor() {
     actual fun close() {
         frames.clear()
     }
-
-}
-
-private fun ArrayBuffer.toUtf8() {
 
 }

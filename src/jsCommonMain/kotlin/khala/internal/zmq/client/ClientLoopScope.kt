@@ -2,6 +2,7 @@ package khala.internal.zmq.client
 
 import khala.internal.zmq.bindings.ZmqContext
 import khala.internal.zmq.bindings.ZmqMsg
+import khala.internal.zmq.bindings.rawSocket
 
 private val varargWrapper = js("function(f) { return function() { return f(arguments); }; }")
 private val setTimeout = js("function(f, d) { setTimeout(f, d); }")
@@ -19,7 +20,7 @@ internal actual class ClientLoopScope<L, S>(
             val newSocket = ZmqContext.createAndConnectDealer(address)
             val newSocketState = socketStateProducer(loopState)
             forwardSockets[address] = SocketWithState(newSocket, newSocketState)
-            newSocket.socket.on("message", varargWrapper { args -> forwardListener(
+            newSocket.rawSocket.on("message", varargWrapper { args -> forwardListener(
                 this,
                 loopState,
                 newSocketState,
@@ -35,6 +36,7 @@ internal actual class ClientLoopScope<L, S>(
     actual fun remove(address: String) {
         forwardSockets.remove(address)?.socket?.close()
     }
+
 
     actual fun invokeAfterTimeout(
         timeoutMillis: Long,

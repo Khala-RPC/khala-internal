@@ -52,3 +52,6 @@ internal actual class ZmqSocket(internal val socket: dynamic, private val webSoc
         }
     }
 }
+
+internal actual val ZmqSocket.rawSocket: dynamic
+    get() = this.socket

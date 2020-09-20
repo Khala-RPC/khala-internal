@@ -2,6 +2,7 @@ package khala.internal.zmq.server
 
 import khala.internal.zmq.bindings.ZmqContext
 import khala.internal.zmq.bindings.ZmqMsg
+import khala.internal.zmq.bindings.rawSocket
 
 private val varargWrapper = js("function(f) { return function() { return f(arguments); }; }")
 
@@ -20,7 +21,7 @@ internal actual class ServerLoop<L> actual constructor(
     )
 
     init {
-        backwardSocket.socket.on("message", varargWrapper { args ->
+        backwardSocket.rawSocket.on("message", varargWrapper { args ->
             loopScope.run { backwardListener(loopState, ZmqMsg(args)) }
         })
     }

@@ -150,24 +150,34 @@ kotlin {
                 implementation("org.junit.jupiter:junit-jupiter-params:5.5.2")
             }
         }
-        val browserMain by getting {
-            dependencies {
-                implementation(npm(name = "@prodatalab/jszmq", version = "0.2.2"))
-            }
+        val jsCommonMain by creating {
+            dependsOn(commonMain)
         }
-        val browserTest by getting {
+        val jsCommonTest by creating {
+            dependsOn(commonTest)
             dependencies {
                 implementation(kotlin("test-js"))
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.3.9")
             }
         }
+        val browserMain by getting {
+            dependsOn(jsCommonMain)
+            dependencies {
+                implementation(npm(name = "@prodatalab/jszmq", version = "0.2.2"))
+            }
+        }
+        val browserTest by getting {
+            dependsOn(jsCommonTest)
+        }
         val nodeMain by getting {
+            dependsOn(jsCommonMain)
             dependencies {
                 implementation(npm(name = "zeromq", version = "5.2.0"))
                 implementation(npm(name = "@prodatalab/jszmq", version = "0.2.2"))
             }
         }
         val nodeTest by getting {
+            dependsOn(jsCommonTest)
             dependencies {
                 implementation(kotlin("test-js"))
             }
