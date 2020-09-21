@@ -1,1 +1,0 @@
-Here should lie contents from https://github.com/zeromq/libzmq/tree/master/include

@@ -1,6 +1,6 @@
 package khala.internal.zmq.bindings
 
-import khala.internal.cinterop.czmq.ZMQ_POLLIN
+import khala.internal.cinterop.zmq.ZMQ_POLLIN
 import khala.internal.cinterop.zmq.zmq_poll
 import khala.internal.cinterop.zmq.zmq_pollitem_t
 import kotlinx.cinterop.allocArray

@@ -2,7 +2,7 @@ headers = json.h arraylist.h json_object.h
 compilerOpts.linux = -I/usr/include/json-c -I/usr/local/include/json-c
 linkerOpts.linux = -L/usr/lib/x86_64-linux-gnu -ljson-c
 linkerOpts.osx = -L/opt/local/lib -L/usr/local/opt/json-c/lib -ljson-c
-compilerOpts.mingw = -Isrc/mingwX64Main/resources/include/jsonc
+compilerOpts.mingw = -Isrc/mingwX64Main/resources/include/jsonc -v
 linkerOpts.mingw = -Lsrc/mingwX64Main/resources/bin -ljson-c -v
 
 ---
