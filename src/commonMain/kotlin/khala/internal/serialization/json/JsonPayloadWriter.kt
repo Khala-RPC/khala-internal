@@ -3,7 +3,11 @@ package khala.internal.serialization.json
 import khala.internal.events.functions.LocalFunction
 import khala.internal.events.functions.NamedFunctionLink
 import khala.internal.serialization.PayloadWriter
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
 
+@ExperimentalJsExport
+@JsExport
 class JsonPayloadWriter : PayloadWriter() {
 
     private var structuredPayload: Structured = null

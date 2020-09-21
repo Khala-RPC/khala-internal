@@ -5,7 +5,11 @@ import khala.internal.events.streams.DEFAULT
 import khala.internal.events.streams.SendingStream
 import khala.internal.events.streams.StreamMode
 import khala.internal.events.streams.default.DefaultSendingStream
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
 
+@ExperimentalJsExport
+@JsExport
 abstract class PayloadWriter {
 
     private val _localFunctions = ArrayList<LocalFunction>()

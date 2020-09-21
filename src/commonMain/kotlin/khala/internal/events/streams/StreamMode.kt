@@ -1,5 +1,8 @@
 package khala.internal.events.streams
 
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
+
 /**
  * This file contains different modes of asynchronous streams.
  * Stream mode actually defines how streams deal with very high load situations.
@@ -19,4 +22,6 @@ typealias StreamMode = Byte
  *  - For client, using KhalaClient.setZmqHighWaterMark function before calling any remote functions.
  *  - For server, passing HWM to its constructor when creating KhalaServer instance.
  */
+@ExperimentalJsExport
+@JsExport
 const val DEFAULT: StreamMode = 0

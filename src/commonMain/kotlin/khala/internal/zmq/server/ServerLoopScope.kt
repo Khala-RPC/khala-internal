@@ -3,7 +3,6 @@ package khala.internal.zmq.server
 import khala.internal.zmq.bindings.MsgBuilder
 import khala.internal.zmq.bindings.ZmqMsg
 import khala.internal.zmq.bindings.buildMsg
-import khala.internal.zmq.client.ClientLoopScope
 
 /**
  * This class works as a receiver for lambdas that will be called from the loop, so its methods are not thread-safe.

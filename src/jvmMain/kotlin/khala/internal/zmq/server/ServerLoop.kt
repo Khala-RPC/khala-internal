@@ -1,7 +1,6 @@
 @file:JvmName("ServerLoopActualKt")
 package khala.internal.zmq.server
 
-import java.util.concurrent.atomic.AtomicInteger
 import co.touchlab.stately.isolate.IsolateState
 import khala.internal.zmq.bindings.ZmqContext
 import khala.internal.zmq.bindings.ZmqMsg
