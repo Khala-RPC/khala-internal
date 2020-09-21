@@ -6,7 +6,9 @@ import khala.internal.serialization.PayloadReader
 import khala.internal.serialization.SerializationProtocol
 import khala.internal.serialization.binary.BinaryPayloadReader
 import khala.internal.serialization.json.JsonPayloadReader
+import kotlin.js.ExperimentalJsExport
 
+@ExperimentalJsExport
 internal fun getPayloadReaderFactory(serializationProtocol: SerializationProtocol): PayloadReaderFactory? =
     when (serializationProtocol) {
         BINARY -> BinaryPayloadReaderFactory()
@@ -14,12 +16,14 @@ internal fun getPayloadReaderFactory(serializationProtocol: SerializationProtoco
         else -> null
     }
 
+@ExperimentalJsExport
 internal interface PayloadReaderFactory {
 
     fun getPayloadReader(bytes: ByteArray): PayloadReader
 
 }
 
+@ExperimentalJsExport
 private class BinaryPayloadReaderFactory : PayloadReaderFactory {
 
     override fun getPayloadReader(bytes: ByteArray): PayloadReader =
@@ -27,6 +31,7 @@ private class BinaryPayloadReaderFactory : PayloadReaderFactory {
 
 }
 
+@ExperimentalJsExport
 private class JsonPayloadReaderFactory : PayloadReaderFactory {
 
     override fun getPayloadReader(bytes: ByteArray): PayloadReader =

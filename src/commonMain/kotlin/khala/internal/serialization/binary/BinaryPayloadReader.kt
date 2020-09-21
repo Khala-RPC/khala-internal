@@ -8,7 +8,11 @@ import kotlinx.io.readByte
 import kotlinx.io.readDouble
 import kotlinx.io.readInt
 import kotlinx.io.text.readUtf8String
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
 
+@ExperimentalJsExport
+@JsExport
 class BinaryPayloadReader(bytes: ByteArray) : PayloadReader(bytes) {
 
     private val bytePacket = ByteArrayInput(bytes)

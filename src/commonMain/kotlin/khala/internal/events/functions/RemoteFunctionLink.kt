@@ -2,10 +2,14 @@ package khala.internal.events.functions
 
 import khala.internal.serialization.PayloadReader
 import khala.internal.serialization.PayloadWriter
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
 
 /**
  * Link to a remote function, either anonymous or named.
  */
+@ExperimentalJsExport
+@JsExport
 interface RemoteFunctionLink {
 
     /**

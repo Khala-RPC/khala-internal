@@ -1,6 +1,8 @@
 package khala.internal.events.streams
 
 import khala.internal.serialization.PayloadWriter
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
 
 /**
  * Asynchronous sending stream.
@@ -14,6 +16,8 @@ import khala.internal.serialization.PayloadWriter
  * Payload that does not contain any streams is completed by default.
  * Once stream is completed, all memory resources consumed by this stream are released on both client and server.
  */
+@ExperimentalJsExport
+@JsExport
 interface SendingStream {
 
     fun sendNextElement(elementWriter: (PayloadWriter) -> Unit)

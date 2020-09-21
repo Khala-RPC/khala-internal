@@ -47,8 +47,12 @@ tasks.withType<Test> {
     useJUnitPlatform()
 }
 
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    kotlinOptions.freeCompilerArgs += "-Xopt-in=kotlin.js.ExperimentalJsExport"
+}
+
 kotlin {
-    //TODO explicitApi()
+    //explicitApi()
     jvm {
         compilations.all {
             kotlinOptions.jvmTarget = "1.8"
@@ -75,7 +79,7 @@ kotlin {
     val hostOs = System.getProperty("os.name")
     val isLinuxX64 = hostOs == "Linux"
     val isMingwX64 = hostOs.startsWith("Windows")
-    //val isMacOSX64 = hostOs == "Mac OS X"
+    val isMacOSX64 = hostOs == "Mac OS X"
     val nativeTarget = when {
         isLinuxX64 -> linuxX64()
         isMingwX64 -> mingwX64()

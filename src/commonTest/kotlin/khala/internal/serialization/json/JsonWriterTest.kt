@@ -1,4 +1,4 @@
-package khala.internal.json
+package khala.internal.serialization.json
 
 import khala.internal.serialization.json.writeJson
 import kotlin.test.Test

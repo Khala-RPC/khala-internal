@@ -7,7 +7,11 @@ import kotlinx.io.ByteArrayOutput
 import kotlinx.io.text.writeUtf8String
 import kotlinx.io.writeDouble
 import kotlinx.io.writeInt
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
 
+@ExperimentalJsExport
+@JsExport
 class BinaryPayloadWriter : PayloadWriter() {
 
     private val bytePacketBuilder = ByteArrayOutput()

@@ -3,11 +3,15 @@ package khala.internal.events.functions
 import khala.internal.serialization.PayloadReader
 import khala.internal.serialization.binary.BinaryPayloadReader
 import khala.internal.serialization.binary.BinaryPayloadWriter
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
 
 /**
  * Local anonymous function which will be available inside a single query and then released.
  * One [LocalFunction] instance may be reused through many queries, [onRelease] will be called after each query finishes.
  */
+@ExperimentalJsExport
+@JsExport
 class LocalFunction(
     /**
      * This function is called from event loop thread.

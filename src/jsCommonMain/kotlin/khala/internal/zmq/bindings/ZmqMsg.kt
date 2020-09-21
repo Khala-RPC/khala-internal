@@ -10,7 +10,7 @@ external class Buffer {
 
 }
 
-fun Buffer.bufferToString(): String = this.toString("utf8")
+internal fun Buffer.bufferToString(): String = this.toString("utf8")
 
 actual typealias BinaryData = Buffer
 

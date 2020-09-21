@@ -5,7 +5,6 @@ import khala.internal.zmq.bindings.ZmqContext
 import khala.internal.zmq.bindings.ZmqMsg
 import khala.internal.zmq.bindings.ZmqSocket
 import khala.internal.zmq.bindings.nextLoopId
-import kotlin.native.concurrent.AtomicInt
 import kotlin.native.concurrent.TransferMode
 import kotlin.native.concurrent.Worker
 import kotlin.native.concurrent.freeze

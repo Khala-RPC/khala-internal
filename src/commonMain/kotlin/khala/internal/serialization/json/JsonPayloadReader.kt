@@ -3,7 +3,11 @@ package khala.internal.serialization.json
 import khala.internal.events.functions.NamedFunctionLink
 import khala.internal.events.functions.RemoteFunctionLink
 import khala.internal.serialization.PayloadReader
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
 
+@ExperimentalJsExport
+@JsExport
 class JsonPayloadReader(bytes: ByteArray) : PayloadReader(bytes) {
 
     fun readStructured(): Structured {

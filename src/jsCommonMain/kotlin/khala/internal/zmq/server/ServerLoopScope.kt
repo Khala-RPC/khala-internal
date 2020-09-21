@@ -2,7 +2,6 @@ package khala.internal.zmq.server
 
 import khala.internal.zmq.bindings.ZmqMsg
 import khala.internal.zmq.bindings.ZmqSocket
-import khala.internal.zmq.client.ClientLoopScope
 
 private val setTimeout = js("function(f, d) { setTimeout(f, d); }")
 
