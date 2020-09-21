@@ -35,7 +35,7 @@ jobs:
       - name: Build Windows
         if: matrix.os == 'windows-latest'
         run: >-
-          ./gradlew cinteropJsoncMingwX64 cinteropLibzmqMingwX64 linkDebugTestMingwX64;
+          ./gradlew cinteropLibzmqMingwX64 cinteropCzmqMingwX64 cinteropJsoncMingwX64 cinteropMsgpackcMingwX64 linkDebugTestMingwX64;
           Copy-Item src/mingwX64Main/resources/bin/* build/bin/mingwX64/debugTest/;
           ./gradlew mingwX64Test linkReleaseSharedMingwX64 linkReleaseStaticMingwX64
 
