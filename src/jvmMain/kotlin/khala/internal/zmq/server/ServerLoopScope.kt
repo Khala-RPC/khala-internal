@@ -21,7 +21,17 @@ internal actual class ServerLoopScope<L>(
         msg.send(backwardSocket)
     }
 
-    actual fun invokeAfterTimeout(
+    actual fun invokeAfterShortDelay(block: ServerLoopScope<L>.(L) -> Unit) {
+        //TODO
+        invokeAfterTimeout(5000, block)
+    }
+
+    actual fun invokeAfterLongDelay(block: ServerLoopScope<L>.(L) -> Unit) {
+        //TODO
+        invokeAfterTimeout(60000, block)
+    }
+
+    private fun invokeAfterTimeout(
         timeoutMillis: Long,
         block: ServerLoopScope<L>.(L) -> Unit
     ) {

@@ -1,18 +1,6 @@
 package khala.internal.zmq.bindings
 
-external class Buffer {
 
-    companion object {
-        fun from(str: String, encoding: String = definedExternally): Buffer
-    }
-
-    fun toString(encoding: String = definedExternally, start: Int = definedExternally, end: Int = definedExternally): String
-
-}
-
-internal fun Buffer.bufferToString(): String = this.toString("utf8")
-
-actual typealias BinaryData = Buffer
 
 internal actual class ZmqMsg actual constructor() {
 
@@ -33,7 +21,7 @@ internal actual class ZmqMsg actual constructor() {
         close()
     }
 
-    actual fun addBytes(bytes: BinaryData) {
+    actual fun addBytes(bytes: ZmqBinaryData) {
         frames.addLast(bytes)
     }
 
@@ -41,7 +29,7 @@ internal actual class ZmqMsg actual constructor() {
         frames.addLast(Buffer.from(str))
     }
 
-    actual fun popBytes(): BinaryData = frames.removeFirst() as Buffer
+    actual fun popBytes(): ZmqBinaryData = frames.removeFirst() as Buffer
 
     actual fun popString(): String = frames.removeFirst().toString("utf8")//(Int8Array(frames.removeFirst().buffer as ArrayBuffer) as ByteArray).toString()
 

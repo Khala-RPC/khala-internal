@@ -37,8 +37,17 @@ internal actual class ClientLoopScope<L, S>(
         forwardSockets.remove(address)?.socket?.close()
     }
 
+    actual fun invokeAfterShortDelay(block: ClientLoopScope<L, S>.(L) -> Unit) {
+        //TODO
+        invokeAfterTimeout(5000, block)
+    }
 
-    actual fun invokeAfterTimeout(
+    actual fun invokeAfterLongDelay(block: ClientLoopScope<L, S>.(L) -> Unit) {
+        //TODO
+        invokeAfterTimeout(60000, block)
+    }
+
+    private fun invokeAfterTimeout(
         timeoutMillis: Long,
         block: ClientLoopScope<L, S>.(L) -> Unit
     ) {

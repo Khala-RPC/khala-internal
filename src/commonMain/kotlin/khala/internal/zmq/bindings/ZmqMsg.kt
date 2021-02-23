@@ -1,23 +1,16 @@
 package khala.internal.zmq.bindings
 
 /**
- * Binary block that is received and sent inside ZMQ messages.
- * //TODO We need methods to convert this to ByteArray and back.
- * This is NOT ByteArray because ByteArray is not really interoperable with some platform-specific code.
- */
-expect class BinaryData
-
-/**
  * Binding for ZMQ Multipart Message
  */
 internal expect class ZmqMsg() {
 
     fun send(socket: ZmqSocket)
 
-    fun addBytes(bytes: BinaryData)
+    fun addBytes(bytes: ZmqBinaryData)
     fun addString(str: String)
 
-    fun popBytes(): BinaryData
+    fun popBytes(): ZmqBinaryData
     fun popString(): String
 
     fun close()
@@ -26,7 +19,7 @@ internal expect class ZmqMsg() {
 
 internal class MsgBuilder(val msg: ZmqMsg) {
 
-    operator fun BinaryData.unaryPlus() {
+    operator fun ZmqBinaryData.unaryPlus() {
         msg.addBytes(this)
     }
 

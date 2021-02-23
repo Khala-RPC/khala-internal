@@ -2,7 +2,7 @@ package khala.internal.events.functions
 
 import khala.internal.serialization.PayloadReader
 import khala.internal.serialization.PayloadWriter
-import khala.internal.zmq.bindings.BinaryData
+import khala.internal.zmq.bindings.ZmqBinaryData
 import kotlin.js.ExperimentalJsExport
 import kotlin.js.JsExport
 
@@ -12,7 +12,7 @@ import kotlin.js.JsExport
  */
 @ExperimentalJsExport
 internal class TheirFunctionLink(
-    val clientIdentity: BinaryData,
+    val clientIdentity: ZmqBinaryData,
     val theirQueryID: Long,
     val theirFunctionID: Int
 ) : RemoteFunctionLink {

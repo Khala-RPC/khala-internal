@@ -43,7 +43,7 @@ internal actual class ZmqMsg {
         val frame = zmsg_pop(message)
         val data = zframe_data(frame)!!
         val size = zframe_size(frame).convert<Int>()
-        return BinaryData(data, size)
+        return ZmqBinaryData(data, size)
     }
 
     actual fun popString(): String {

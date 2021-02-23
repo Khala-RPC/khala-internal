@@ -3,10 +3,6 @@ package khala.internal.zmq.bindings
 import khala.internal.cinterop.czmq.*
 import kotlinx.cinterop.*
 
-actual class BinaryData constructor(
-    val rawData: COpaquePointer,
-    val size: Int
-)
 
 internal actual class ZmqMsg {
 
@@ -31,7 +27,7 @@ internal actual class ZmqMsg {
         zmsg_send(cValuesOf(message), socket.socket)
     }
 
-    actual fun addBytes(bytes: BinaryData) {
+    actual fun addBytes(bytes: ZmqBinaryData) {
         zmsg_addmem(message, bytes.rawData, bytes.size.convert())
     }
 
@@ -39,11 +35,11 @@ internal actual class ZmqMsg {
         zmsg_addstr(message, str)
     }
 
-    actual fun popBytes(): BinaryData {
+    actual fun popBytes(): ZmqBinaryData {
         val frame = zmsg_pop(message)
         val data = zframe_data(frame)!!
         val size = zframe_size(frame).convert<Int>()
-        return BinaryData(data, size)
+        return ZmqBinaryData(data, size)
     }
 
     actual fun popString(): String {

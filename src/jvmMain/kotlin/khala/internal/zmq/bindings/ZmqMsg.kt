@@ -3,8 +3,6 @@ package khala.internal.zmq.bindings
 
 import org.zeromq.ZMsg
 
-actual typealias BinaryData = ByteArray
-
 internal actual class ZmqMsg {
 
     companion object {
@@ -28,7 +26,7 @@ internal actual class ZmqMsg {
         message.send(socket.socket)
     }
 
-    actual fun addBytes(bytes: BinaryData) {
+    actual fun addBytes(bytes: ZmqBinaryData) {
         message.add(bytes)
     }
 
@@ -36,7 +34,7 @@ internal actual class ZmqMsg {
         message.add(str)
     }
 
-    actual fun popBytes(): BinaryData {
+    actual fun popBytes(): ZmqBinaryData {
         return message.pop().data
     }
 
