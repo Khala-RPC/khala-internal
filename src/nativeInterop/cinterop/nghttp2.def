@@ -1,0 +1,6 @@
+headers = nghttp2/nghttp2.h
+compilerOpts.linux = -I/usr/include -I/usr/local/include
+linkerOpts.linux = -L/usr/lib/x86_64-linux-gnu -lnghttp2
+linkerOpts.osx = -L/opt/local/lib -L/usr/local/opt/libczmq/lib -lnghttp2
+compilerOpts.mingw = -Isrc/mingwX64Main/resources/include/libnghttp2 -Isrc/mingwX64Main/resources/include/nghttp2 -Isrc -v
+linkerOpts.mingw = -Lsrc/mingwX64Main/resources/bin -lnghttp2 -v

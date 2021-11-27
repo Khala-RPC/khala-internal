@@ -1,6 +1,6 @@
 plugins {
-    kotlin("multiplatform") version "1.4.0"
-    maven
+    kotlin("multiplatform") version "1.6.0"
+    //maven
     `maven-publish`
 }
 
@@ -9,6 +9,7 @@ version = "0.0.1-alpha"
 
 publishing {
     publications {
+        /*
         maven {
             pom {
                 withXml {
@@ -19,6 +20,7 @@ publishing {
                 }
             }
         }
+        */
     }
     repositories {
         maven {
@@ -104,6 +106,10 @@ kotlin {
         val czmq by main.cinterops.creating {
             defFile("src/nativeInterop/cinterop/czmq.def")
             packageName("khala.internal.cinterop.czmq")
+        }
+        val nghttp2 by main.cinterops.creating {
+            defFile("src/nativeInterop/cinterop/nghttp2.def")
+            packageName("khala.internal.cinterop.nghttp2")
         }
         binaries {
             staticLib {
