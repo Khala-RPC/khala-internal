@@ -111,6 +111,10 @@ kotlin {
             defFile("src/nativeInterop/cinterop/nghttp2.def")
             packageName("khala.internal.cinterop.nghttp2")
         }
+        val openssl by main.cinterops.creating {
+            defFile("src/nativeInterop/cinterop/openssl.def")
+            packageName("khala.internal.cinterop.openssl")
+        }
         binaries {
             staticLib {
                 baseName = "khala-internal-static"
