@@ -1,0 +1,6 @@
+headers = event2/http.h
+compilerOpts.linux = -I/usr/include -I/usr/local/include
+linkerOpts.linux = -L/usr/lib/x86_64-linux-gnu -levent
+linkerOpts.osx = -L/opt/local/lib -L/usr/local/opt/libevent/lib -levent
+compilerOpts.mingw = -Isrc/mingwX64Main/resources/include/libevent -Isrc/mingwX64Main/resources/include/libevent -Isrc -v
+linkerOpts.mingw = -Lsrc/mingwX64Main/resources/bin -levent -v

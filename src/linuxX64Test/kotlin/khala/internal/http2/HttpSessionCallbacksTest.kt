@@ -5,6 +5,7 @@ import khala.internal.cinterop.nghttp2.nghttp2_session_client_new
 import khala.internal.cinterop.nghttp2.nghttp2_session
 import khala.internal.cinterop.nghttp2.nghttp2_session_callbacks
 import khala.internal.cinterop.openssl.SSL_new
+import khala.internal.cinterop.libevent.evhttp_bound_socket
 import kotlinx.cinterop.*
 import kotlin.test.Test
 

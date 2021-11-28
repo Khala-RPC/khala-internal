@@ -115,6 +115,10 @@ kotlin {
             defFile("src/nativeInterop/cinterop/openssl.def")
             packageName("khala.internal.cinterop.openssl")
         }
+        val libevent by main.cinterops.creating {
+            defFile("src/nativeInterop/cinterop/libevent.def")
+            packageName("khala.internal.cinterop.libevent")
+        }
         binaries {
             staticLib {
                 baseName = "khala-internal-static"

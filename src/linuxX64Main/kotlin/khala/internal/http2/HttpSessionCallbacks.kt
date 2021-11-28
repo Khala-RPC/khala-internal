@@ -9,8 +9,6 @@ import kotlinx.cinterop.cValue
 
 class HttpSessionCallbacks {
 
-
-
     init {
 
     }
