@@ -142,6 +142,7 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation("co.touchlab:stately-isolate:1.1.1-a1")
+                implementation("io.github.microutils:kotlin-logging:2.1.0")
                 //implementation("org.jetbrains.kotlinx:kotlinx-io:0.2.0-npm-dev-11")
                 //implementation("org.jetbrains.kotlinx:kotlinx-io:0.1.16")
             }
