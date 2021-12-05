@@ -4,3 +4,9 @@ linkerOpts.linux = -L/usr/lib/x86_64-linux-gnu -levent
 linkerOpts.osx = -L/opt/local/lib -L/usr/local/opt/libevent/lib -levent
 compilerOpts.mingw = -Isrc/mingwX64Main/resources/include/libevent -Isrc/mingwX64Main/resources/include/libevent -Isrc -v
 linkerOpts.mingw = -Lsrc/mingwX64Main/resources/bin -levent -v
+
+---
+
+static void lol_test(int* kek) {
+    *kek = 1234;
+}

@@ -14,18 +14,20 @@ import platform.posix.strdup
 
 private val logger = KotlinLogging.logger {}
 
+// struct http2_session_data
 class HttpSessionData(
     val root: HttpStreamData?,
     val bufferEvent: CPointer<bufferevent>?,
-    val httpContext: HttpContext,
+    val httpContext: HttpContext?,
     val httpSession: CPointer<nghttp2_session>?,
     val clientAddress: CPointer<ByteVar>?
 ) {
     val stableRef = StableRef.create(this)
 }
 
+// create_http2_session_data
 internal fun createSessionData(
-    httpContext: HttpContext,
+    httpContext: HttpContext?,
     fd: Int,
     address: CPointer<sockaddr>?,
     addressLength: Int
@@ -35,7 +37,7 @@ internal fun createSessionData(
     //TODO SSL stuff (see https://nghttp2.org/documentation/tutorial-server.html)
     setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, valRef, valValue.size.convert())
     val bufferEvent = bufferevent_socket_new(
-        httpContext.eventBase, fd, (BEV_OPT_CLOSE_ON_FREE or BEV_OPT_DEFER_CALLBACKS).toInt()
+        httpContext?.eventBase, fd, (BEV_OPT_CLOSE_ON_FREE or BEV_OPT_DEFER_CALLBACKS).toInt()
     )
     bufferevent_enable(bufferEvent, (EV_READ or EV_WRITE).toShort())
     val host = ByteArray(NI_MAXHOST)
@@ -54,8 +56,9 @@ internal fun createSessionData(
     )
 }
 
+// delete_http2_session_data
 internal fun deleteSessionData(sessionData: HttpSessionData) {
-    logger.debug { "Client disconnected: ${sessionData.clientAddress}" }
+    logger.info { "Client disconnected: ${sessionData.clientAddress}" }
     //TODO SSL stuff (see https://nghttp2.org/documentation/tutorial-server.html)
     bufferevent_free(sessionData.bufferEvent)
     nghttp2_session_del(sessionData.httpSession)

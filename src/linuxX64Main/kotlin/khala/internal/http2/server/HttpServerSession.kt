@@ -9,25 +9,44 @@ import platform.posix.size_t
 
 private val logger = KotlinLogging.logger {}
 
-internal fun initializeHttpSession(sessionData: HttpSessionData) {
-    val callbacks: CPointerVar<nghttp2_session_callbacks> = CPointerVar(nativeNullPtr)
-    nghttp2_session_callbacks_new(callbacks.ptr)
-    nghttp2_session_callbacks_set_send_callback(callbacks.value, )
+// initialize_nghttp2_session
+//TODO
+internal fun initializeHttpSession(sessionData: HttpSessionData?) {
+    logger.info { "initializeHttpSession" }
+    val callbacksPtr: CValuesRef<CPointerVar<nghttp2_session_callbacks>> = cValuesOf<nghttp2_session_callbacks>()
+    nghttp2_session_callbacks_new(callbacksPtr)
+    memScoped {
+        val callbacks = callbacksPtr.getPointer(this)[0]
+        nghttp2_session_callbacks_set_send_callback(callbacks, staticCFunction(::serverSendCallback))
+        nghttp2_session_callbacks_set_on_frame_recv_callback(callbacks, staticCFunction(::onFrameRecvCallback))
+        nghttp2_session_callbacks_set_on_stream_close_callback(
+            callbacks,
+            staticCFunction(::onStreamCloseCallback)
+        )
+        nghttp2_session_callbacks_set_on_header_callback(callbacks, staticCFunction(::onHeaderCallback))
+        nghttp2_session_callbacks_set_on_begin_headers_callback(
+            callbacks,
+            staticCFunction(::onBeginHeadersCallback)
+        )
+        val arr = arrayOf(sessionData?.httpSession)
+        memScoped {
+            nghttp2_session_server_new(arr.toCValues(), callbacks, sessionData?.stableRef?.asCPointer())
+        }
+        nghttp2_session_callbacks_del(callbacks)
+    }
 }
 
-internal fun deleteHttpSessionData(sessionData: HttpSessionData) {
-    //TODO
-}
-
-internal fun deleteHttpStreamData(streamData: HttpStreamData) {
+internal fun deleteHttpSessionData(sessionData: HttpSessionData?) {
+    logger.info { "deleteHttpSession" }
     //TODO
 }
 
 /**
  * Sends pending outgoing frames.
  */
-internal fun sessionSend(sessionData: HttpSessionData): Int {
-    val rv = nghttp2_session_send(sessionData.httpSession)
+// session_send
+internal fun sessionSend(sessionData: HttpSessionData?): Int {
+    val rv = nghttp2_session_send(sessionData?.httpSession)
     if (rv != 0) {
         logger.warn { "Fatal error during sessionSend: ${nghttp2_strerror(rv)}" }
         return -1
@@ -42,11 +61,12 @@ internal fun sessionSend(sessionData: HttpSessionData): Int {
  * previously setup callbacks and also queue outgoing frames.
  * To send any pending outgoing frames, we immediately call [sessionSend].
  */
-internal fun sessionRecv(sessionData: HttpSessionData): Int {
-    val input: CPointer<evbuffer>? = bufferevent_get_input(sessionData.bufferEvent)
+// session_recv
+internal fun sessionRecv(sessionData: HttpSessionData?): Int {
+    val input: CPointer<evbuffer>? = bufferevent_get_input(sessionData?.bufferEvent)
     val dataLength: size_t = evbuffer_get_length(input)
     val data: CPointer<UByteVar>? = evbuffer_pullup(input, -1)
-    val readLength: ssize_t = nghttp2_session_mem_recv(sessionData.httpSession, data, dataLength)
+    val readLength: ssize_t = nghttp2_session_mem_recv(sessionData?.httpSession, data, dataLength)
     if (readLength < 0) {
         logger.warn { "Fatal error during sessionRecv: ${nghttp2_strerror(readLength.toInt())}" }
         return -1
