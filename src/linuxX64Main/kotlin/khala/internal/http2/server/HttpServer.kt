@@ -16,7 +16,7 @@ fun runServer(
     keyFile: String,
     certificateFile: String
 ) {
-    // TODO SSL stuff (see https://nghttp2.org/documentation/tutorial-server.html)
+    //TODO SSL stuff (see https://nghttp2.org/documentation/tutorial-server.html)
     val eventBase = event_base_new()
     val appContext = HttpContext(null, eventBase)
     startServerListening(eventBase, service, appContext)
@@ -51,7 +51,7 @@ internal fun startServerListening(
     while (rp != null) {
         val eventConnectionListener: CPointer<evconnlistener>? = evconnlistener_new_bind(
             eventBase,
-            staticCFunction(::newConnectionAcceptCallback),
+            staticCFunction(::serverNewConnectionAcceptCallback),
             httpContext.stableRef.asCPointer(),
             LEV_OPT_CLOSE_ON_FREE or LEV_OPT_REUSEABLE,
             16,
@@ -68,7 +68,7 @@ internal fun startServerListening(
 }
 
 // send_server_connection_header
-internal fun sendServerConnectionHeader(sessionData: HttpSessionData?): Int {
+internal fun sendServerConnectionHeader(sessionData: HttpServerSessionData?): Int {
     val settingsEntry = cValue<nghttp2_settings_entry> {
         settings_id = NGHTTP2_SETTINGS_MAX_CONCURRENT_STREAMS.convert()
         value = 100u

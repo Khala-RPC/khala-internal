@@ -9,6 +9,7 @@ import mu.KotlinLogging
 import platform.posix.int32_t
 import platform.posix.memcmp
 import platform.posix.size_t
+import platform.posix.ssize_t
 import platform.posix.uint32_t
 
 private val logger = KotlinLogging.logger {}
@@ -18,7 +19,7 @@ private val logger = KotlinLogging.logger {}
  * Initializes HttpSessionData and bufferevent, registers callbacks for the created connection.
  */
 // acceptcb
-internal fun newConnectionAcceptCallback(
+internal fun serverNewConnectionAcceptCallback(
     eventConnectionListener: CPointer<evconnlistener>?,
     fd: Int,
     socketAddress: CPointer<sockaddr>?,
@@ -26,7 +27,7 @@ internal fun newConnectionAcceptCallback(
     arg: COpaquePointer?
 ) {
     val httpContext: StableRef<HttpContext>? = arg?.asStableRef()
-    val sessionData: HttpSessionData = createSessionData(httpContext?.get(), fd, socketAddress, addressLength)
+    val sessionData: HttpServerSessionData = createSessionData(httpContext?.get(), fd, socketAddress, addressLength)
     bufferevent_setcb(
         sessionData.bufferEvent,
         staticCFunction(::serverReadCallback),
@@ -45,13 +46,13 @@ internal fun serverEventCallback(
     events: Short,
     ptr: COpaquePointer?
 ) {
-    val sessionData = ptr?.asStableRef<HttpSessionData>()?.get()
+    val sessionData = ptr?.asStableRef<HttpServerSessionData>()?.get()
     if ((events.toUInt() and BEV_EVENT_CONNECTED.toUInt()) != 0u) {
         logger.info { "Client ${sessionData?.clientAddress} connected" }
         //TODO ALPN & SSL stuff. See https://nghttp2.org/documentation/tutorial-server.html
-        initializeHttpSession(sessionData)
+        initializeServerHttpSession(sessionData)
         if (sendServerConnectionHeader(sessionData) != 0 ||
-                sessionSend(sessionData) != 0) {
+                serverSessionSend(sessionData) != 0) {
             deleteHttpSessionData(sessionData)
         }
         return
@@ -73,17 +74,38 @@ internal fun serverEventCallback(
 
 /**
  * Called when data is available to read in the bufferevent input buffer.
- * We just call [sessionRecv] to process incoming data.
+ * We just call [serverSessionRecv] to process incoming data.
  */
 // readcb
 internal fun serverReadCallback(
     bufferEvent: CPointer<bufferevent>?,
     ptr: COpaquePointer?
 ) {
-    val sessionData = ptr?.asStableRef<HttpSessionData>()?.get()
-    if (sessionRecv(sessionData) != 0) {
+    val sessionData = ptr?.asStableRef<HttpServerSessionData>()?.get()
+    if (serverSessionRecv(sessionData) != 0) {
         deleteHttpSessionData(sessionData)
     }
+}
+
+/**
+ * The nghttp2_session_send() function serializes the frame into wire format and calls this function,
+ * which is of type nghttp2_send_callback.
+ */
+// send_callback
+internal fun serverSendCallback(
+    session: CPointer<nghttp2_session>?,
+    data: CPointer<UByteVar>?,
+    length: size_t,
+    flags: Int,
+    userData: COpaquePointer?
+): ssize_t {
+    val sessionData = userData?.asStableRef<HttpServerSessionData>()?.get()
+    val bufferEvent = sessionData?.bufferEvent
+    if (evbuffer_get_length(bufferevent_get_output(bufferEvent)) >= OUTPUT_WOULD_BLOCK_THRESHOLD) {
+        return NGHTTP2_ERR_WOULDBLOCK.convert()
+    }
+    bufferevent_write(bufferEvent, data, length)
+    return length.convert()
 }
 
 /**
@@ -106,7 +128,7 @@ internal fun serverWriteCallback(
     bufferEvent: CPointer<bufferevent>?,
     ptr: COpaquePointer?
 ) {
-    val sessionData = ptr?.asStableRef<HttpSessionData>()?.get()
+    val sessionData = ptr?.asStableRef<HttpServerSessionData>()?.get()
     if (evbuffer_get_length(bufferevent_get_output(bufferEvent)) > 0u) return
     if (nghttp2_session_want_read(sessionData?.httpSession) == 0 &&
         nghttp2_session_want_write(sessionData?.httpSession) == 0
@@ -114,7 +136,7 @@ internal fun serverWriteCallback(
         deleteHttpSessionData(sessionData)
         return
     }
-    if (sessionSend(sessionData) != 0) {
+    if (serverSessionSend(sessionData) != 0) {
         deleteHttpSessionData(sessionData)
     }
 }
@@ -123,12 +145,12 @@ internal fun serverWriteCallback(
  * Called when the reception of a header block in HEADERS or PUSH_PROMISE frame is started.
  */
 // on_begin_headers_callback
-internal fun onBeginHeadersCallback(
+internal fun serverOnBeginHeadersCallback(
     session: CPointer<nghttp2_session>?,
     frame: CPointer<nghttp2_frame>?,
     userData: COpaquePointer?
 ): Int {
-    val sessionData = userData?.asStableRef<HttpSessionData>()?.get()
+    val sessionData = userData?.asStableRef<HttpServerSessionData>()?.get()
     frame?.pointed?.let {
         if (it.hd.type.toUInt() != NGHTTP2_HEADERS ||
             it.headers.cat != NGHTTP2_HCAT_REQUEST) {
@@ -142,13 +164,13 @@ internal fun onBeginHeadersCallback(
 
 /**
  * Called when nghttp2 library emits single header name/value pair.
- * Each header name/value pair is emitted via [onHeaderCallback] function, which is called after [onBeginHeadersCallback]
+ * Each header name/value pair is emitted via [serverOnHeaderCallback] function, which is called after [serverOnBeginHeadersCallback]
  * We search for the :path header field among the request headers and store the requested path
  * in the http2_stream_data object.
  * TODO Currently we ignore the :method header field and always treat the request as a GET request.
  */
 // on_header_callback
-internal fun onHeaderCallback(
+internal fun serverOnHeaderCallback(
     session: CPointer<nghttp2_session>?,
     frame: CPointer<nghttp2_frame>?,
     name: CPointer<UByteVar>?,
@@ -164,7 +186,7 @@ internal fun onHeaderCallback(
         if (it.hd.type.toUInt() == NGHTTP2_HEADERS) {
             if (it.headers.cat != NGHTTP2_HCAT_REQUEST) return 0
             val streamDataPtr = nghttp2_session_get_stream_user_data(session, it.hd.stream_id) ?: return 0
-            val streamData = streamDataPtr.asStableRef<HttpStreamData>().get()
+            val streamData = streamDataPtr.asStableRef<HttpServerStreamData>().get()
             streamData.requestPath ?: return 0
             if (nameLength.toInt() == path.size - 1 && memcmp(path, name, nameLength) == 0) {
                 var j: size_t = 0.convert()
@@ -182,12 +204,12 @@ internal fun onHeaderCallback(
  * Called when a frame is fully received.
  */
 // on_frame_recv_callback
-internal fun onFrameRecvCallback(
+internal fun serverOnFrameRecvCallback(
     session: CPointer<nghttp2_session>?,
     frame: CPointer<nghttp2_frame>?,
     userData: COpaquePointer?
 ): Int {
-    val sessionData = userData?.asStableRef<HttpSessionData>()?.get()
+    val sessionData = userData?.asStableRef<HttpServerSessionData>()?.get()
     frame?.pointed?.let {
         when (it.hd.type.toUInt()) {
             NGHTTP2_DATA -> {
@@ -199,7 +221,7 @@ internal fun onFrameRecvCallback(
                 /* Check that the client request has finished */
                 if ((it.hd.flags.toUInt() and NGHTTP2_FLAG_END_STREAM) != 0u) {
                     val streamDataPtr = nghttp2_session_get_stream_user_data(session, it.hd.stream_id) ?: return 0
-                    return onRequestRecv(session, sessionData, streamDataPtr.asStableRef<HttpStreamData>().get())
+                    return onRequestRecv(session, sessionData, streamDataPtr.asStableRef<HttpServerStreamData>().get())
                 }
             }
         }
@@ -211,16 +233,16 @@ internal fun onFrameRecvCallback(
  * Called when the stream is about to close.
  */
 // on_stream_close_callback
-internal fun onStreamCloseCallback(
+internal fun serverOnStreamCloseCallback(
     session: CPointer<nghttp2_session>?,
     streamId: int32_t,
     errorCode: uint32_t,
     userData: COpaquePointer?
 ): Int {
     logger.info { "onStreamCloseCallback" }
-    val sessionData = userData?.asStableRef<HttpSessionData>()?.get()
+    val sessionData = userData?.asStableRef<HttpServerSessionData>()?.get()
     val streamDataPtr = nghttp2_session_get_stream_user_data(session, streamId) ?: return 0
-    val streamData = streamDataPtr.asStableRef<HttpStreamData>().get()
+    val streamData = streamDataPtr.asStableRef<HttpServerStreamData>().get()
     removeStream(sessionData, streamData)
     deleteStreamData(streamData)
     return 0

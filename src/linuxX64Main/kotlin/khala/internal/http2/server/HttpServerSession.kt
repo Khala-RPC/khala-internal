@@ -10,23 +10,22 @@ import platform.posix.size_t
 private val logger = KotlinLogging.logger {}
 
 // initialize_nghttp2_session
-//TODO
-internal fun initializeHttpSession(sessionData: HttpSessionData?) {
+internal fun initializeServerHttpSession(sessionData: HttpServerSessionData?) {
     logger.info { "initializeHttpSession" }
     val callbacksPtr: CValuesRef<CPointerVar<nghttp2_session_callbacks>> = cValuesOf<nghttp2_session_callbacks>()
     nghttp2_session_callbacks_new(callbacksPtr)
     memScoped {
         val callbacks = callbacksPtr.getPointer(this)[0]
         nghttp2_session_callbacks_set_send_callback(callbacks, staticCFunction(::serverSendCallback))
-        nghttp2_session_callbacks_set_on_frame_recv_callback(callbacks, staticCFunction(::onFrameRecvCallback))
+        nghttp2_session_callbacks_set_on_frame_recv_callback(callbacks, staticCFunction(::serverOnFrameRecvCallback))
         nghttp2_session_callbacks_set_on_stream_close_callback(
             callbacks,
-            staticCFunction(::onStreamCloseCallback)
+            staticCFunction(::serverOnStreamCloseCallback)
         )
-        nghttp2_session_callbacks_set_on_header_callback(callbacks, staticCFunction(::onHeaderCallback))
+        nghttp2_session_callbacks_set_on_header_callback(callbacks, staticCFunction(::serverOnHeaderCallback))
         nghttp2_session_callbacks_set_on_begin_headers_callback(
             callbacks,
-            staticCFunction(::onBeginHeadersCallback)
+            staticCFunction(::serverOnBeginHeadersCallback)
         )
         val arr = arrayOf(sessionData?.httpSession)
         memScoped {
@@ -36,7 +35,7 @@ internal fun initializeHttpSession(sessionData: HttpSessionData?) {
     }
 }
 
-internal fun deleteHttpSessionData(sessionData: HttpSessionData?) {
+internal fun deleteHttpSessionData(sessionData: HttpServerSessionData?) {
     logger.info { "deleteHttpSession" }
     //TODO
 }
@@ -45,7 +44,7 @@ internal fun deleteHttpSessionData(sessionData: HttpSessionData?) {
  * Sends pending outgoing frames.
  */
 // session_send
-internal fun sessionSend(sessionData: HttpSessionData?): Int {
+internal fun serverSessionSend(sessionData: HttpServerSessionData?): Int {
     val rv = nghttp2_session_send(sessionData?.httpSession)
     if (rv != 0) {
         logger.warn { "Fatal error during sessionSend: ${nghttp2_strerror(rv)}" }
@@ -59,10 +58,10 @@ internal fun sessionSend(sessionData: HttpSessionData?): Int {
  * using the nghttp2_session_mem_recv() function.
  * The nghttp2_session_mem_recv() function processes the data and may both invoke the
  * previously setup callbacks and also queue outgoing frames.
- * To send any pending outgoing frames, we immediately call [sessionSend].
+ * To send any pending outgoing frames, we immediately call [serverSessionSend].
  */
 // session_recv
-internal fun sessionRecv(sessionData: HttpSessionData?): Int {
+internal fun serverSessionRecv(sessionData: HttpServerSessionData?): Int {
     val input: CPointer<evbuffer>? = bufferevent_get_input(sessionData?.bufferEvent)
     val dataLength: size_t = evbuffer_get_length(input)
     val data: CPointer<UByteVar>? = evbuffer_pullup(input, -1)
@@ -75,7 +74,7 @@ internal fun sessionRecv(sessionData: HttpSessionData?): Int {
         logger.warn { "Fatal error: evbuffer_drain failed" }
         return -1
     }
-    if (sessionSend(sessionData) != 0) {
+    if (serverSessionSend(sessionData) != 0) {
         return -1
     }
     return 0

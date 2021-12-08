@@ -1,12 +1,6 @@
-headers = event2/http.h event2/listener.h event2/bufferevent.h event2/buffer.h event2/bufferevent_ssl.h
+headers = event.h event2/http.h event2/listener.h event2/bufferevent.h event2/bufferevent_ssl.h event2/buffer.h event2/bufferevent_ssl.h event2/dns.h
 compilerOpts.linux = -I/usr/include -I/usr/local/include
 linkerOpts.linux = -L/usr/lib/x86_64-linux-gnu -levent
 linkerOpts.osx = -L/opt/local/lib -L/usr/local/opt/libevent/lib -levent
 compilerOpts.mingw = -Isrc/mingwX64Main/resources/include/libevent -Isrc/mingwX64Main/resources/include/libevent -Isrc -v
 linkerOpts.mingw = -Lsrc/mingwX64Main/resources/bin -levent -v
-
----
-
-static void lol_test(int* kek) {
-    *kek = 1234;
-}

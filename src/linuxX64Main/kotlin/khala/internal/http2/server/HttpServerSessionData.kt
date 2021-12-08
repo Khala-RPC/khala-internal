@@ -4,19 +4,16 @@ import khala.internal.cinterop.libevent.*
 import khala.internal.cinterop.nghttp2.nghttp2_session
 import khala.internal.cinterop.nghttp2.nghttp2_session_del
 import kotlinx.cinterop.*
-import kotlinx.cinterop.internal.CCall
 import mu.KotlinLogging
-import platform.linux.malloc_info
 import platform.posix.IPPROTO_TCP
 import platform.posix.TCP_NODELAY
-import platform.posix.free
 import platform.posix.strdup
 
 private val logger = KotlinLogging.logger {}
 
 // struct http2_session_data
-class HttpSessionData(
-    val root: HttpStreamData?,
+class HttpServerSessionData(
+    val root: HttpServerStreamData?,
     val bufferEvent: CPointer<bufferevent>?,
     val httpContext: HttpContext?,
     val httpSession: CPointer<nghttp2_session>?,
@@ -31,7 +28,7 @@ internal fun createSessionData(
     fd: Int,
     address: CPointer<sockaddr>?,
     addressLength: Int
-): HttpSessionData {
+): HttpServerSessionData {
     val valValue = cValuesOf(1)
     val valRef: CValuesRef<*> = valValue
     //TODO SSL stuff (see https://nghttp2.org/documentation/tutorial-server.html)
@@ -47,7 +44,7 @@ internal fun createSessionData(
     } else {
         strdup(host.toKString())
     }
-    return HttpSessionData(
+    return HttpServerSessionData(
         root = null,
         bufferEvent = bufferEvent,
         httpContext = httpContext,
@@ -57,9 +54,10 @@ internal fun createSessionData(
 }
 
 // delete_http2_session_data
-internal fun deleteSessionData(sessionData: HttpSessionData) {
+internal fun deleteSessionData(sessionData: HttpServerSessionData) {
     logger.info { "Client disconnected: ${sessionData.clientAddress}" }
     //TODO SSL stuff (see https://nghttp2.org/documentation/tutorial-server.html)
     bufferevent_free(sessionData.bufferEvent)
     nghttp2_session_del(sessionData.httpSession)
+    sessionData.stableRef.dispose()
 }

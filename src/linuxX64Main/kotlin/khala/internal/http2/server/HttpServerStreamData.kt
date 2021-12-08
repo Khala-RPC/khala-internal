@@ -2,7 +2,6 @@ package khala.internal.http2.server
 
 import kotlinx.cinterop.StableRef
 import platform.posix.close
-import platform.posix.free
 import platform.posix.int32_t
 
 /**
@@ -12,9 +11,9 @@ import platform.posix.int32_t
  * Initially, root->next is NULL.
  */
 // struct http2_stream_data
-class HttpStreamData(
-    var prev: HttpStreamData?,
-    var next: HttpStreamData?,
+class HttpServerStreamData(
+    var prev: HttpServerStreamData?,
+    var next: HttpServerStreamData?,
     var requestPath: String?,
     val streamId: int32_t,
     var fd: Int
@@ -24,10 +23,10 @@ class HttpStreamData(
 
 // create_http2_stream_data
 internal fun createStreamData(
-    sessionData: HttpSessionData?,
+    sessionData: HttpServerSessionData?,
     streamId: int32_t
-): HttpStreamData {
-    val streamData = HttpStreamData(
+): HttpServerStreamData {
+    val streamData = HttpServerStreamData(
         prev = null,
         next = null,
         requestPath = null,
@@ -39,16 +38,17 @@ internal fun createStreamData(
 }
 
 // delete_http2_stream_data
-internal fun deleteStreamData(streamData: HttpStreamData) {
+internal fun deleteStreamData(streamData: HttpServerStreamData) {
     if (streamData.fd != -1) {
         close(streamData.fd)
     }
+    streamData.stableRef.dispose()
 }
 
 // add_stream
 internal fun addStream(
-    sessionData: HttpSessionData?,
-    streamData: HttpStreamData
+    sessionData: HttpServerSessionData?,
+    streamData: HttpServerStreamData
 ) {
     streamData.next = sessionData?.root?.next
     sessionData?.root?.next = streamData
@@ -60,8 +60,8 @@ internal fun addStream(
 
 // remove_stream
 internal fun removeStream(
-    sessionData: HttpSessionData?,
-    streamData: HttpStreamData?
+    sessionData: HttpServerSessionData?,
+    streamData: HttpServerStreamData?
 ) {
     streamData?.prev?.next = streamData?.next
     streamData?.next?.let {

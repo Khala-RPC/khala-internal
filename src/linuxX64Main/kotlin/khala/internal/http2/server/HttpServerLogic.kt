@@ -50,7 +50,7 @@ internal fun sendResponse(
 // error_reply
 internal fun errorReply(
     session: CPointer<nghttp2_session>?,
-    streamData: HttpStreamData?
+    streamData: HttpServerStreamData?
 ): Int {
     val pipeFd = IntArray(2)
     val headerName = ":status".cstr
@@ -124,8 +124,8 @@ internal fun fileReadCallback(
 // on_request_recv
 internal fun onRequestRecv(
     session: CPointer<nghttp2_session>?,
-    sessionData: HttpSessionData?,
-    streamData: HttpStreamData?
+    sessionData: HttpServerSessionData?,
+    streamData: HttpServerStreamData?
 ): Int {
     logger.info { "onRequestRecv" }
     val headerName = ":status".cstr
