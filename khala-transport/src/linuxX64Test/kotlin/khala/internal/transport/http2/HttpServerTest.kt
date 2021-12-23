@@ -14,7 +14,6 @@ class HttpServerTest {
         logger.info { "info" }
         logger.debug { "debug" }
         logger.warn { "warn" }
-        logger.error { "error" }
-        runServer("12345", "", "")
+        //runServer("12345", "", "")
     }
 }

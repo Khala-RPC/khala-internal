@@ -1,28 +1,5 @@
 kotlin {
     //explicitApi()
-    jvm {
-        compilations.all {
-            kotlinOptions.jvmTarget = "1.8"
-        }
-    }
-    js("browser", IR) {
-        attributes.attribute(Attribute.of(String::class.java), "browser")
-        browser {
-            testTask {
-                useKarma {
-                    useChromeHeadless()
-                    webpackConfig.cssSupport.enabled = true
-                }
-            }
-        }
-        binaries.executable()
-    }
-    js("node", IR) {
-        attributes.attribute(Attribute.of(String::class.java), "node")
-        nodejs {
-        }
-        binaries.executable()
-    }
     val hostOs = System.getProperty("os.name")
     val isLinuxX64 = hostOs == "Linux"
     val isMingwX64 = hostOs.startsWith("Windows")
@@ -33,7 +10,6 @@ kotlin {
         //isMacOSX64 -> macosX64()
         else -> throw GradleException("Host OS is not supported in Kotlin/Native.")
     }
-
     nativeTarget.apply {
         val main by compilations.getting
         val msgpackc by main.cinterops.creating {
@@ -66,10 +42,10 @@ kotlin {
         }
         binaries {
             staticLib {
-                baseName = "khala-internal-static"
+                baseName = "khala-internal-transport-static"
             }
             sharedLib {
-                baseName = "khala-internal"
+                baseName = "khala-internal-transport"
             }
         }
     }
@@ -88,95 +64,18 @@ kotlin {
             dependencies {
                 implementation("co.touchlab:stately-isolate:1.1.1-a1")
                 implementation("io.github.microutils:kotlin-logging:2.1.0")
-                //implementation("org.jetbrains.kotlinx:kotlinx-io:0.2.0-npm-dev-11")
-                //implementation("org.jetbrains.kotlinx:kotlinx-io:0.1.16")
             }
         }
         val commonTest by getting {
             dependencies {
                 implementation("co.touchlab:stately-concurrency:1.1.1")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9")
-                implementation(kotlin("test-common"))
-                implementation(kotlin("test-annotations-common"))
             }
         }
-        val jvmMain by getting {
+        val jsCommonTest by getting {
             dependencies {
-                implementation("org.zeromq:jeromq:0.5.2")
-                implementation("org.json:json:20200518")
-            }
-        }
-        val jvmTest by getting {
-            dependencies {
-                implementation(kotlin("test-junit5"))
-                implementation("org.junit.jupiter:junit-jupiter-engine:5.5.2")
-                implementation("org.junit.jupiter:junit-jupiter-api:5.5.2")
-                implementation("org.junit.jupiter:junit-jupiter-params:5.5.2")
-            }
-        }
-        val jsCommonMain by creating {
-            dependsOn(commonMain)
-        }
-        val jsCommonTest by creating {
-            dependsOn(commonTest)
-            dependencies {
-                implementation(kotlin("test-js"))
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.3.9")
             }
         }
-        val browserMain by getting {
-            dependsOn(jsCommonMain)
-            dependencies {
-                implementation(npm(name = "@prodatalab/jszmq", version = "0.2.2"))
-            }
-        }
-        val browserTest by getting {
-            dependsOn(jsCommonTest)
-        }
-        val nodeMain by getting {
-            dependsOn(jsCommonMain)
-            dependencies {
-                implementation(npm(name = "zeromq", version = "5.2.0"))
-                implementation(npm(name = "@prodatalab/jszmq", version = "0.2.2"))
-            }
-        }
-        val nodeTest by getting {
-            dependsOn(jsCommonTest)
-            dependencies {
-                implementation(kotlin("test-js"))
-            }
-        }
-        val nativeMain by creating {
-            dependsOn(commonMain)
-        }
-        val nativeTest by creating {
-            dependsOn(commonTest)
-        }
-        if (isMingwX64) {
-            val mingwX64Main by getting {
-                dependsOn(nativeMain)
-            }
-            val mingwX64Test by getting {
-                dependsOn(nativeTest)
-            }
-        }
-        if (isLinuxX64) {
-            val linuxX64Main by getting {
-                dependsOn(nativeMain)
-            }
-            val linuxX64Test by getting {
-                dependsOn(nativeTest)
-            }
-        }
-        /*
-        if (isMacOSX64) {
-            val macOSX64Main by getting {
-                dependsOn(nativeMain)
-            }
-            val macOSX64Test by getting {
-                dependsOn(nativeTest)
-            }
-        }
-        */
     }
 }
